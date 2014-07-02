@@ -1,0 +1,24 @@
+{
+	"lineNumbers": true,
+	"matchBrackets": true,
+	"dragDrop": false,
+	"autoCloseBrackets": true,
+    "autoCloseTags": true,
+	"gutters": ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
+	"indentUnit": 4,
+	"tabSize": 4,
+    "indentWithTabs": true,
+	"mode": "haxe",
+	"lineWrapping": true,
+	//"highlightSelectionMatches": {"showToken": "regexp\\w"},
+    "foldGutter": true,
+	"showCursorWhenSelecting": true,
+	"keyMap": "sublime",
+    //"vimMode": true,
+	//"keyMap": "vim",
+	"lint": true,
+    "matchTags": 
+    {
+    	"bothTags": true
+    }
+}

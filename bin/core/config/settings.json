@@ -1,0 +1,17 @@
+{
+	//Path to theme(relative to "HIDE/core")
+	"theme": "light.css",
+	
+	//Path to locale(relative to "HIDE/core/locale")
+	"locale": "en.json",
+	
+	//Regex for ignored files(uses new EReg(item, ""))
+	"ignore": [
+    	"project.hide",
+        "\\.git",
+        "\\.svn",
+	],
+		
+	"indentWithTabs": true,
+	"indentSize": 4
+}

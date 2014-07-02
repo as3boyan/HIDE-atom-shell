@@ -1,0 +1,365 @@
+/* codeEditorTheme = monokai */
+
+.nav>li>a 
+{
+    position: relative;
+    display: block;
+    padding: 5px 10px;
+}
+
+.navbar
+{
+    min-height: 0;
+}
+
+.navbar-brand
+{
+    padding: 0;
+    line-height: 1;
+    display: none;
+}
+
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-brand:hover
+{
+	color: #343434;
+}
+
+.navbar-default
+{
+/*     font-family:"Ubuntu"; */
+    font-size:15px;
+    border:0px;
+    background-color: #fbfbfb;
+}
+
+.navbar-collapse 
+{
+	padding-left: 0;
+}
+
+.navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+	color: #707070;
+}
+
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+	color: #1c1c1c;
+	background-color: #e6e6e6;
+}
+
+#quickOpenListGroup {
+	height: 266px;
+}
+
+.dropdown-menu
+{
+    background-color: #ffffff;
+/*     border: none; */
+    border-bottom: 0;
+}
+
+.dropdown-menu>li>a:hover
+{
+    color: #1c1c1c;
+    background-color: #fbfbfb;
+}
+
+.dropdown-menu .divider
+{
+    background-color: #d0d0d0;
+}
+
+.dropdown-menu>li>a
+{
+    color: #1c1c1c;
+}
+
+.hotkey
+{
+    color: #d0d0d0;
+    float: right;
+}
+
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+	color: #383838;
+	background-color: #ffffff;
+/*     border-left: 1px solid #e7e7e7; 
+    border-right:  1px solid #e7e7e7; */
+/*     border-left:  */
+/*     border-left:  */
+/*     border: 1px solid #e7e7e7; */
+/*     border-bottom-width: 0; */
+}
+
+#welcomeScreen 
+{
+    background-color: #505050;
+    box-shadow: none;
+}
+
+.navbar-nav>li>.dropdown-menu 
+{
+	margin-top: -1px;
+}
+
+.navbar
+{
+	border-bottom: solid #bbb 1px;
+}
+
+
+/* General */
+.jqx-widget-content{
+	background-color: #e6e6e6;
+}
+
+
+
+/* Project Panel */
+
+#filetreemenu{
+	background-color: #ffffff;
+}
+
+.jqx-tree-dropdown-root{ 
+	margin-top:10px;
+}
+
+#filetree {
+	background: #e6e6e6;
+}
+
+#filetree .jqx-widget-content{
+	background: #e6e6e6;
+}
+
+#panelContentpanelfiletree .jqx-tree-dropdown{
+	padding: 0 0 0 20px;
+}
+
+#panelContentpanelfiletree .jqx-tree-item{
+	padding:0px
+}
+
+#panelContentpanelfiletree .jqx-tree-item-li{
+	line-height:14px;
+}
+
+
+
+/* Outline Panel */
+
+#outline .jqx-widget-content{
+	background: #e6e6e6;
+}
+
+#panelContentpaneloutline .jqx-tree-item{
+	padding:0px
+}
+
+#panelContentpaneloutline .jqx-tree-item-li{
+	line-height:14px;
+}
+
+
+
+/* Vertical Scroll bars */
+
+#panelfiletreeverticalScrollBar, #paneloutlineverticalScrollBar{
+	width: 11px !important;
+	margin-left: 8px;
+}
+
+#jqxScrollAreaDownpanelfiletreeverticalScrollBar, #jqxScrollWrappanelfiletreeverticalScrollBar,  #jqxScrollAreaUppanelfiletreeverticalScrollBar, #jqxScrollThumbpanelfiletreeverticalScrollBar, 
+#jqxScrollAreaDownpaneloutlineverticalScrollBar, #jqxScrollWrappaneloutlineverticalScrollBar,  #jqxScrollAreaUppaneloutlineverticalScrollBar, #jqxScrollThumbpaneloutlineverticalScrollBar
+{
+	width: 100% !important;
+}
+
+#jqxScrollThumbpanelfiletreeverticalScrollBar ,#jqxScrollThumbpaneloutlineverticalScrollBar{
+	width: 4px !important;
+	margin: 2px;
+	background-color: #b4b4a2;
+}
+
+.jqx-icon-arrow-up{
+	width:9px;
+	margin-left:-2px;
+	background-image:url( images/compact/icon-up.png);
+}
+
+.jqx-icon-arrow-down{
+	width:9px;
+	margin-left:-2px;
+	background-image:url( images/compact/icon-down.png);
+}
+
+.jqx-scrollbar-button-state-hover{
+	border:none;
+}
+
+
+.jqx-scrollbar-button-state-pressed, .jqx-scrollbar-button-state-pressed{
+	background-color:#ffffff;
+}
+
+
+
+/* Horizontal Scroll bars */
+
+#panelfiletreehorizontalScrollBar, #paneloutlinehorizontalScrollBar{
+	height: 11px !important;
+	margin-top: 6px;
+}
+
+#jqxScrollAreaDownpanelfiletreehorizontalScrollBar, #jqxScrollWrappanelfiletreehorizontalScrollBar,  #jqxScrollAreaUppanelfiletreehorizontalScrollBar, #jqxScrollThumbpanelfiletreehorizontalScrollBar, 
+#jqxScrollAreaDownpaneloutlinehorizontalScrollBar, #jqxScrollWrappaneloutlinehorizontalScrollBar,  #jqxScrollAreaUppaneloutlinehorizontalScrollBar, #jqxScrollThumbpaneloutlinehorizontalScrollBar
+{
+	height: 100% !important;
+}
+
+#jqxScrollThumbpanelfiletreehorizontalScrollBar ,#jqxScrollThumbpaneloutlinehorizontalScrollBar{
+	height: 4px !important;
+	margin-top: 3px;
+	background-color: #b4b4a2;
+}
+
+.jqx-icon-arrow-left{
+	height:9px;
+	margin-top:-2px;
+	background-image:url( "images/compact/icon-left.png");
+}
+
+.jqx-icon-arrow-right{
+	height:9px;
+	margin-top:-2px;
+	background-image:url( "images/compact/icon-right.png);
+}
+
+
+
+/* Split Bars */
+
+.jqx-splitter-splitbar-vertical{
+	border: none !important;
+	width: 6px !important;
+	background: #f3f3f3;
+	padding:1px;
+}
+
+.jqx-splitter-collapse-button-vertical{
+	background-image:url( "images/compact/vertical-splitter-close.gif");
+}
+
+.jqx-splitter-splitbar-horizontal{
+	border: none !important;
+	height: 5px !important;
+	padding:1px;
+	background: #f3f3f3;
+}
+
+.jqx-splitter-collapse-button-horizontal{
+	background-image:url( "images/compact/horizontal-splitter-close.gif");
+}
+
+
+.jqx-splitter-splitbar-hover{
+	background-color: #ffffff;
+}
+
+/* Code Editor */
+
+.jqx-widget
+
+
+#editor{
+	background-color: #000000;
+	
+}
+
+ul.tabs > li.selected{
+	background-color: #272822;
+	color: #dedede;
+	border-color:#46473f;
+}
+
+ul.tabs > li{
+	background-color: #46473f;
+	color: #adafa2;
+	border-color:#46473f;
+}
+
+ul.tabs > li:hover {
+	color:#dedede;
+}
+
+.CodeMirror-wrap{
+	border-color: #46473f;
+	
+	
+}
+
+.CodeMirror-linewidget{
+	left:0px !important;
+	padding-left:0px !important;
+	background-color:none !important;
+	border-radius:10px;
+	margin-top:2px;
+	padding:5px;
+	margin-bottom:10px;
+	display:inline-block!important;
+	width: auto !important;
+	background: no-repeat url("images/compact/hint-bg.png");
+	background-position: top center;
+}
+
+.CodeMirror-linewidget .lint-error{
+	background-color:#cccccc !important;
+	padding: 5px;
+	padding-left: 15px;
+	border-radius:10px;
+	opacity: 1;
+}
+
+.selectedParameter{
+	background-color:#006cff;
+	padding:2px;
+	margin-top:1px;
+	padding-left:10px;
+	padding-right:10px;
+	border-radius:10px;
+	color:#ffffff;
+	font-weight:normal;
+}
+
+/* Results & Output */
+#tabs1 > div.jqx-tabs-headerWrapper{
+	background-color: #cccccc;
+}
+
+#status-bar{
+	background-color: #333333;
+	
+}
+
+#output > textarea{
+	border:none
+}
+
+#results{
+	background-color: #ffffff;
+}
+
+#status-cursor{
+	color: #ffffff;
+}
+
+#status-indicators{
+	background-color: #cccccc;
+	padding-left: 20px;
+	padding-right: 10px;
+	font-weight:bold;
+}
+
+#indent-type, #indent-width-label{
+	
+}

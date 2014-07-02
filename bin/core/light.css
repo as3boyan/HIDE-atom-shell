@@ -1,0 +1,107 @@
+/* codeEditorTheme = default */
+
+.nav>li>a 
+{
+    position: relative;
+    display: block;
+    padding: 5px 10px;
+}
+
+.navbar
+{
+    min-height: 0;
+}
+
+.navbar-brand
+{
+    padding: 0;
+    line-height: 1;
+    display: none;
+}
+
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-brand:hover
+{
+	color: #343434;
+}
+
+.navbar-default
+{
+/*     font-family:"Ubuntu"; */
+    font-size:15px;
+    border:0px;
+    background-color: #fbfbfb;
+}
+
+.navbar-collapse 
+{
+	padding-left: 0;
+}
+
+.navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+	color: #707070;
+}
+
+.navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:focus, .navbar-inverse .navbar-nav>.open>a:hover {
+	color: #1c1c1c;
+	background-color: #ffffff;
+}
+
+#quickOpenListGroup {
+	height: 266px;
+}
+
+.dropdown-menu
+{
+    background-color: #ffffff;
+/*     border: none; */
+    border-bottom: 0;
+}
+
+.dropdown-menu>li>a:hover
+{
+    color: #1c1c1c;
+    background-color: #fbfbfb;
+}
+
+.dropdown-menu .divider
+{
+    background-color: #d0d0d0;
+}
+
+.dropdown-menu>li>a
+{
+    color: #1c1c1c;
+}
+
+.hotkey
+{
+    color: #d0d0d0;
+    float: right;
+}
+
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover {
+	color: #383838;
+	background-color: #ffffff;
+/*     border-left: 1px solid #e7e7e7; 
+    border-right:  1px solid #e7e7e7; */
+/*     border-left:  */
+/*     border-left:  */
+/*     border: 1px solid #e7e7e7; */
+/*     border-bottom-width: 0; */
+}
+
+#welcomeScreen 
+{
+    background-color: #505050;
+    box-shadow: none;
+}
+
+.navbar-nav>li>.dropdown-menu 
+{
+	margin-top: -1px;
+}
+
+.navbar
+{
+	border-bottom: solid #bbb 1px;
+}

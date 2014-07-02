@@ -1,0 +1,113 @@
+{
+	"snippets":
+	[
+		
+		{
+			"name": "haxe",
+			"context": "haxe",
+			"templates": 
+			[
+				{
+					"name": "for",
+					"description": "Iterate values",
+					"template": "for (${iteration_variable} in ${iterator})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "for",
+					"description": "Iterate in range",
+					"template": "for (${iteration_variable} in 0...${iterator}.length)\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "var",
+					"description": "Variable declaration",
+					"template": "var ${name}:${type} = new ${type}(${cursor});\n"
+				},
+				{
+					"name": "function",
+					"description": "Function declaration",
+					"template": "function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "public function",
+					"description": "public function",
+					"template": "public function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "static function",
+					"description": "static function",
+					"template": "static function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "inline function",
+					"description": "inline function",
+					"template": "inline function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "macro function",
+					"description": "macro function",
+					"template": "macro function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "public static function",
+					"description": "public static function",
+					"template": "public static function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "inline public static function",
+					"description": "inline public static function",
+					"template": "inline public static function ${name}(${params})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "trace",
+					"description": "trace",
+					"template": "trace${cursor}"
+				},
+                {
+					"name": "switch",
+					"description": "switch",
+					"template": "switch (${value})\n{\ncase ${cursor}:\n\ndefault:\n\n}\n"
+				},
+                {
+					"name": "if",
+					"description": "if",
+					"template": "if (${value})\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "else",
+					"description": "else",
+					"template": "else ${cursor}"
+				},
+                {
+					"name": "case",
+					"description": "case",
+					"template": "case ${cursor}:\n"
+				},
+				{
+					"name": "cast",
+					"description": "cast",
+					"template": "cast ${cursor}\n"
+				},
+{
+					"name": "class",
+					"description": "class",
+					"template": "class ${value}\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "typedef",
+					"description": "typedef",
+					"template": "typedef ${value} = \n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "enum",
+					"description": "enum",
+					"template": "enum ${value}\n{\n${cursor}\n}\n"
+				},
+				{
+					"name": "interface",
+					"description": "interface",
+					"template": "interface ${value}\n{\n${cursor}\n}\n"
+				},
+			]
+		}
+	]
+}

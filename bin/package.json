@@ -1,0 +1,12 @@
+{
+	"name": "HIDE",
+  	"version": "0.4.5",
+	"main": "HIDE-atom-shell.js",
+	"devDependencies": {
+		"mkdirp": "latest",
+		"mv": "latest",
+		"remove": "latest",
+		"walkdir": "latest",
+		"watchr": "latest"
+  	}
+}

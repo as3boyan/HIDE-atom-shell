@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<head>
+	<title localeString="HIDE - cross platform extensible IDE for Haxe">HIDE - cross platform extensible IDE for Haxe</title>
+	<meta charset="utf-8">
+	
+	<link href="includes/css/main.css" rel="stylesheet">
+	
+	<link id="theme" href="core/light.css" rel="stylesheet" media="screen">
+	
+	<script src="includes/js/main.js"></script>
+
+    <script type="text/javascript">
+	function updateSize(height)
+	{					
+		if (height > 28)
+		{
+			$('#tabs1').jqxTabs({height:(height - 28).toString() + "px"});
+		}
+	}
+
+    $(document).ready(function () {
+// 			var nwgui = require('nw.gui');
+// 			var mainWindow = nwgui.Window.get();      
+// 			mainWindow.showDevTools();
+
+// 			process.on('uncaughtException', function (err)
+// 			{
+// 				console.log(err);
+// 				mainWindow.show();
+// 				mainWindow.showDevTools();
+// 			}
+// 			);
+
+            $('#mainSplitter').jqxSplitter({width:'100%', height:'100%', orientation: 'vertical', panels: [{ size: 170, collapsible: false}] });
+            $('#secondNested').jqxSplitter({ width: '100%', height:'100%', orientation: 'horizontal', panels: [{ size: '70%'}] });
+            $('#thirdNested').jqxSplitter({ width: '100%', height: '100%',  orientation: 'horizontal', panels: [{ size: '85%', collapsible: false}] });
+            $("#tabs2").jqxTabs({  height: '100%', width: '100%' });
+			$("#tabs1").jqxTabs({  height: '100%', width: '100%' });
+			
+			$('#thirdNested').on('resize', function (events)
+								{
+									if (events && events.args && events.args.panels)
+									{
+										var height = events.args.panels[1].size;
+										updateSize(height);
+									}
+								}
+								);
+		
+			$(window).on('resize', function ()
+						 {
+							 setTimeout(function ()
+									   {
+											var panels = $('#thirdNested').jqxSplitter('panels');
+							 				updateSize(panels[1].element[0].clientHeight);
+									   }
+									   , 75);
+						 }
+						);
+			
+			$('#filetree').jqxTree({allowDrag: true, allowDrop: true, width: '100%', height: '100%'});
+			$('#filetree').jqxTree('selectItem', null);
+			
+			// Create jqxTree
+			$('#outline').jqxTree({allowDrag: false, allowDrop: false, width: '100%', height: '100%'});
+            $('#outline').jqxTree('selectItem', null);
+			
+			$(".colorPreview").spectrum({});
+		
+//             var fs = require('fs');
+//             fs.exists(require('path').join("core", "HIDE.js"), function (exists)
+//             {                
+//                if (!exists)
+//                {
+//                    mainWindow.show();
+//                    mainWindow.showDevTools();
+//                    $('body').html('HIDE.js is not found! Please compile HIDE.');
+//                }
+// 			}
+//             );
+        });
+    </script>
+	
+	<!-- Code generated using Haxe -->
+    <script type="text/javascript" src="./HIDE.js"></script>
+</head>
+
+<body>	
+    <div id="tabs2">
+        <ul>
+            <li style="margin-left: 30px; height:12px;">Tab 1</li>
+        </ul>
+    
+        <div id="mainSplitter">
+            <div>
+                <div id="secondNested">
+    <!--                File tree panel-->
+					<div>
+						<div id="filetree">
+						</div>
+						<div id='jqxMenu'>
+							<ul id="filetreemenu"></ul>
+						</div>
+					</div>
+    <!--                Outline panel-->
+					<div id="outline"></div>
+                </div>
+            </div>
+            <div>
+                <div id="thirdNested">
+						<div>
+							<!--                Code editor style="padding: 10px 10px 10px 10px;"-->
+							<div id="editor">
+								<ul id="tabs" class="tabs no-select"></ul>
+								<textarea id="code" id="jqxScrollbar"></textarea>
+							</div>
+							
+							<div id="welcomeScreen">
+								<div class="site-wrapper">
+								  <div class="site-wrapper-inner">
+									<div class="cover-container">
+
+									  <div class="masthead clearfix">
+										<div class="inner">
+										  <h3 class="masthead-brand"></h3>
+										  <ul class="nav masthead-nav">
+											<li class="welcome-screen-link active"><a class="welcomeA" href="#">Home</a></li>
+											<li class="welcome-screen-link"><a class="welcomeA" href="#">Features</a></li>
+											<li class="welcome-screen-link"><a class="welcomeA" href="#">Recent</a></li>
+										  </ul>
+										</div>
+									  </div>
+
+									  <div class="inner cover" id="welcomeScreenPage1">
+										<h1 class="cover-heading">Welcome to HIDE</h1>
+										<p class="lead">Start a new project or open an existing one.</p>
+										<p class="lead">
+										  <a href="#" class="btn btn-lg btn-default welcomeBtn welcomeA" id="createNewProject">Create New Project...</a>
+										  <a href="#" class="btn btn-lg btn-default welcomeBtn welcomeA" id="openProject">Open Project...</a>
+										</p>
+									  </div>
+									  
+									  <div class="inner cover" id="welcomeScreenPage2">
+										  <div class="panel-group" id="accordion">
+											  <div class="panel panel-default">
+												<div class="panel-heading welcomeHeading">
+												  <h4 class="panel-title welcomeHeadingTitle">
+													<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+													  Color Preview
+													</a>
+												  </h4>
+												</div>
+												<div id="collapseOne" class="panel-collapse collapse">
+												  <div class="panel-body welcomeBody">
+													Click on color code in any file to activate color preview.
+													<br/>
+													Supported color formats: 0xFFFFFF, #FFFFFF.
+													<br/>
+													<img src="features/colorpreview.gif" />
+												  </div>
+												</div>
+											  </div>
+											  <div class="panel panel-default">
+												<div class="panel-heading welcomeHeading">
+												  <h4 class="panel-title welcomeHeadingTitle">
+													<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+													  Color Picker
+													</a>
+												  </h4>
+												</div>
+												<div id="collapseTwo" class="panel-collapse collapse">
+												  <div class="panel-body welcomeBody">
+													Click on color preview to show color picker.
+													<br/>
+													Color will be applied if you click outside color picker, you can cancel color change if you press Escape, while color picker is shown.
+													<br/>
+													<img src="features/colorpicker.gif" />
+												  </div>
+												</div>
+											  </div>
+											  <div class="panel panel-default">
+												<div class="panel-heading welcomeHeading">
+												  <h4 class="panel-title welcomeHeadingTitle">
+													<a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+													  Open File Dialog
+													</a>
+												  </h4>
+												</div>
+												<div id="collapseThree" class="panel-collapse collapse">
+												  <div class="panel-body welcomeBody">
+													Press Ctrl-Shift-O (or Cmd-Shift-O on Mac) in code editor to open file in new tab.
+													<br/>
+													<img src="features/openfile.png" />
+												  </div>
+												</div>
+											  </div>
+											  <div class="panel panel-default">
+												<div class="panel-heading welcomeHeading">
+												  <h4 class="panel-title welcomeHeadingTitle">
+													<a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+													  Show Class List
+													</a>
+												  </h4>
+												</div>
+												<div id="collapseFour" class="panel-collapse collapse">
+												  <div class="panel-body welcomeBody">
+													Press Ctrl-Shift-P (or Cmd-Shift-P on Mac) in code editor to show full list of classes available for current project.
+													<br/>
+													<img src="features/showclasslist.png" />
+												  </div>
+												</div>
+											  </div>
+											<div class="panel panel-default">
+												<div class="panel-heading welcomeHeading">
+												  <h4 class="panel-title welcomeHeadingTitle">
+													<a data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
+													  EReg Preview
+													</a>
+												  </h4>
+												</div>
+												<div id="collapseFive" class="panel-collapse collapse">
+												  <div class="panel-body welcomeBody">
+													Click on regular expression in any file to see preview of it applied to current document.
+													<br/>
+													<img src="features/eregpreview.gif" />
+												  </div>
+												</div>
+											  </div>
+											</div>
+									  </div>
+									  
+									  <div class="inner cover" id="welcomeScreenPage3">
+										  <div class="list-group" id="recentProjectsList">
+										  <!--<a href="#" class="list-group-item recentProject">
+											Cras justo odio
+										  </a>-->
+										</div>
+									  </div>
+
+									  <div class="mastfoot">
+										<div class="inner">
+										  <p><a class="welcomeA" href="#" id="github">IDE</a> for Haxe, by <a class="welcomeA" href="#" id="as3boyan">@as3boyan</a> and contributors</a>.</p>
+										</div>
+									  </div>
+									  
+									</div>
+								  </div>
+								</div>
+							</div>
+							
+							<div id="annotationRuler">
+							</div>
+						</div>
+                    <div>
+                        <div class="jqx-hideborder jqx-hidescrollbars" id="tabs1">
+                            <ul>
+                                <li style="margin-left: 30px;"><span id="resultsTab" localeString="Results">Results</span></li>
+                                <li><span id="outputTab" localeString="Output">Output</span><span id="buildStatus" class="glyphicon glyphicon-ok"></span></li>
+                                <!--<li><span localeString="Options">Options</span></li>-->
+                            </ul>
+                            <div id="results">
+								<div class="list-group" id="errors">
+								  
+								</div>
+							</div>
+                            <div id="output"></div>
+                            <!--<div id="options"></div>-->
+                        </div>
+						<div id="status-bar">
+							<div id="status-info">
+								<div id="status-cursor">Line 1, Column 1</div>
+								<div id="status-file"></div>
+							</div>
+							<div id="status-indicators">
+								<div id="status-indent">
+									<div id="indent-type">Spaces:</div>
+									<div id="indent-width-label">4
+									</div>
+									<input id="indent-width-input" type="number" min="1" max="10" maxlength="2" size="2" class="hidden">
+								</div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<div class="colorPreview"></div>
+</body>
