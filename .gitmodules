@@ -2,7 +2,7 @@
 	path = libs/js/CodeMirror
 	url = https://github.com/marijnh/CodeMirror.git
 [submodule "libs/js/alertify.js"]
-	path = lib/js/alertify.js
+	path = libs/js/alertify.js
 	url = https://github.com/fabien-d/alertify.js
 branch = 0.3
 [submodule "libs/hxparse"]
@@ -11,3 +11,6 @@ branch = 0.3
 [submodule "libs/haxeparser"]
 	path = libs/haxeparser
 	url = https://github.com/Simn/haxeparser
+[submodule "externs/haxe-js-kit"]
+	path = externs/haxe-js-kit
+	url = https://github.com/as3boyan/haxe-js-kit.git
