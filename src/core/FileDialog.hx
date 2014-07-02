@@ -60,7 +60,7 @@ class FileDialog
 		var options:DialogOpenOptions = {};
 		options.title = "Open File";
 		options.properties = [];
-		options.properties.push(DialogOptionsProperty.OPEN_FILE);
+		options.properties.push(DialogOpenOptionsProperty.OPEN_FILE);
 		
 		Dialog.showOpenDialog(BrowserWindow.getAllWindows()[0], options, function (filenames)
 		{
@@ -122,7 +122,7 @@ class FileDialog
 		var options:DialogOpenOptions = {};
 		options.title = "Open Folder";
 		options.properties = [];
-		options.properties.push(DialogOptionsProperty.OPEN_DIRECTORY);
+		options.properties.push(DialogOpenOptionsProperty.OPEN_DIRECTORY);
 		
 		Dialog.showOpenDialog(BrowserWindow.getAllWindows()[0], options, function (filenames)
 		{

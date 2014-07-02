@@ -46,7 +46,7 @@
     ,"files" : [
 
     ]
-    ,"activeFile" : "src/Main.hx"
+    ,"activeFile" : "externs/haxe-js-kit/atomshell/Package.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : null

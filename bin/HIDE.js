@@ -3535,7 +3535,7 @@ core.HaxeParserProvider.parse = function(data,path) {
 				case 2:
 					message += "Duplicate Default";
 					break;
-				case 3:
+				case 4:
 					var s = _g[2];
 					message += s;
 					break;
@@ -8880,7 +8880,7 @@ haxeparser.HaxeLexer.__super__ = hxparse.Lexer;
 haxeparser.HaxeLexer.prototype = $extend(hxparse.Lexer.prototype,{
 	__class__: haxeparser.HaxeLexer
 });
-haxeparser.ParserErrorMsg = $hxClasses["haxeparser.ParserErrorMsg"] = { __ename__ : ["haxeparser","ParserErrorMsg"], __constructs__ : ["MissingSemicolon","MissingType","DuplicateDefault","Custom"] };
+haxeparser.ParserErrorMsg = $hxClasses["haxeparser.ParserErrorMsg"] = { __ename__ : ["haxeparser","ParserErrorMsg"], __constructs__ : ["MissingSemicolon","MissingType","DuplicateDefault","UnclosedMacro","Custom"] };
 haxeparser.ParserErrorMsg.MissingSemicolon = ["MissingSemicolon",0];
 haxeparser.ParserErrorMsg.MissingSemicolon.toString = $estr;
 haxeparser.ParserErrorMsg.MissingSemicolon.__enum__ = haxeparser.ParserErrorMsg;
@@ -8890,7 +8890,10 @@ haxeparser.ParserErrorMsg.MissingType.__enum__ = haxeparser.ParserErrorMsg;
 haxeparser.ParserErrorMsg.DuplicateDefault = ["DuplicateDefault",2];
 haxeparser.ParserErrorMsg.DuplicateDefault.toString = $estr;
 haxeparser.ParserErrorMsg.DuplicateDefault.__enum__ = haxeparser.ParserErrorMsg;
-haxeparser.ParserErrorMsg.Custom = function(s) { var $x = ["Custom",3,s]; $x.__enum__ = haxeparser.ParserErrorMsg; $x.toString = $estr; return $x; };
+haxeparser.ParserErrorMsg.UnclosedMacro = ["UnclosedMacro",3];
+haxeparser.ParserErrorMsg.UnclosedMacro.toString = $estr;
+haxeparser.ParserErrorMsg.UnclosedMacro.__enum__ = haxeparser.ParserErrorMsg;
+haxeparser.ParserErrorMsg.Custom = function(s) { var $x = ["Custom",4,s]; $x.__enum__ = haxeparser.ParserErrorMsg; $x.toString = $estr; return $x; };
 haxeparser.ParserError = function(message,pos) {
 	this.msg = message;
 	this.pos = pos;
@@ -9046,9 +9049,9 @@ haxeparser.HaxeCondParser.prototype = $extend(hxparse.Parser_hxparse_LexerTokenS
 	}
 	,__class__: haxeparser.HaxeCondParser
 });
-haxeparser.HaxeTokenSource = function(lexer,mstack,defines) {
+haxeparser.HaxeTokenSource = function(lexer,defines) {
 	this.lexer = lexer;
-	this.mstack = mstack;
+	this.mstack = [];
 	this.defines = defines;
 	this.skipstates = [0];
 	this.rawSource = new hxparse.LexerTokenSource(lexer,haxeparser.HaxeLexer.tok);
@@ -9105,6 +9108,7 @@ haxeparser.HaxeTokenSource.prototype = {
 					case "if":
 						switch(state) {
 						case 0:
+							this.mstack.push(tk.pos);
 							this.pushSt(this.enterMacro()?0:1);
 							break;
 						case 1:case 2:
@@ -9113,6 +9117,7 @@ haxeparser.HaxeTokenSource.prototype = {
 						}
 						break;
 					case "end":
+						this.mstack.pop();
 						if(this.skipstates.length > 1) this.skipstates.pop(); else throw "unexpected #end";
 						break;
 					case "elseif":
@@ -9411,11 +9416,10 @@ hxparse.Parser_haxeparser_HaxeTokenSource_haxeparser_Token.prototype = {
 };
 haxeparser.HaxeParser = function(input,sourceName) {
 	this.doResume = false;
-	this.mstack = [];
 	this.defines = new haxe.ds.StringMap();
 	this.defines.set("true",true);
 	var lexer = new haxeparser.HaxeLexer(input,sourceName);
-	var ts = new haxeparser.HaxeTokenSource(lexer,this.mstack,this.defines);
+	var ts = new haxeparser.HaxeTokenSource(lexer,this.defines);
 	hxparse.Parser_haxeparser_HaxeTokenSource_haxeparser_Token.call(this,ts);
 	this.inMacro = false;
 	this.doc = "";
@@ -9598,12 +9602,13 @@ haxeparser.HaxeParser.aadd = function(a,t) {
 haxeparser.HaxeParser.__super__ = hxparse.Parser_haxeparser_HaxeTokenSource_haxeparser_Token;
 haxeparser.HaxeParser.prototype = $extend(hxparse.Parser_haxeparser_HaxeTokenSource_haxeparser_Token.prototype,{
 	defines: null
-	,mstack: null
 	,doResume: null
 	,doc: null
 	,inMacro: null
 	,parse: function() {
-		return this.parseFile();
+		var res = this.parseFile();
+		if(this.stream.mstack.length != 0) throw new haxeparser.ParserError(haxeparser.ParserErrorMsg.UnclosedMacro,this.stream.mstack[this.stream.mstack.length - 1]);
+		return res;
 	}
 	,psep: function(sep,f) {
 		var _g = this;
@@ -11959,13 +11964,10 @@ haxeparser.HaxeParser.prototype = $extend(hxparse.Parser_haxeparser_HaxeTokenSou
 		}
 	}
 	,reify: function(inMacro) {
+		var reificator = new haxeparser._HaxeParser.Reificator(inMacro);
 		return { toExpr : function(e) {
-			return null;
-		}, toType : function(t,p) {
-			return null;
-		}, toTypeDef : function(t1) {
-			return null;
-		}};
+			return reificator.toExpr(e,e.pos);
+		}, toType : $bind(reificator,reificator.toCType), toTypeDef : $bind(reificator,reificator.toTypeDef)};
 	}
 	,reifyExpr: function(e) {
 		var toExpr = this.reify(this.inMacro).toExpr;
@@ -11992,19 +11994,29 @@ haxeparser.HaxeParser.prototype = $extend(hxparse.Parser_haxeparser_HaxeTokenSou
 					var vl = this.psep(haxeparser.TokenDef.Comma,$bind(this,this.parseVarDecl));
 					return this.reifyExpr({ expr : haxe.macro.ExprDef.EVars(vl), pos : p1});
 				default:
-					var e = this.secureExpr();
-					return this.reifyExpr(e);
+					try {
+						var d = this.parseClass([],[],false);
+						var toType1 = this.reify(this.inMacro).toTypeDef;
+						return { expr : haxe.macro.ExprDef.ECheckType(toType1(d),haxe.macro.ComplexType.TPath({ pack : ["haxe","macro"], name : "Expr", sub : "TypeDefinition", params : []})), pos : p};
+					} catch( _ ) {
+						if( js.Boot.__instanceof(_,hxparse.NoMatch) ) {
+							var e = this.secureExpr();
+							return this.reifyExpr(e);
+						} else throw(_);
+					}
 				}
 				break;
-			case 14:
-				this.last = this.token.elt;
-				this.token = this.token.next;
-				var d = this.parseClass([],[],false);
-				var toType1 = this.reify(this.inMacro).toTypeDef;
-				return { expr : haxe.macro.ExprDef.ECheckType(toType1(d),haxe.macro.ComplexType.TPath({ pack : ["haxe","macro"], name : "Expr", sub : "TypeDefinition", params : []})), pos : p};
 			default:
-				var e = this.secureExpr();
-				return this.reifyExpr(e);
+				try {
+					var d = this.parseClass([],[],false);
+					var toType1 = this.reify(this.inMacro).toTypeDef;
+					return { expr : haxe.macro.ExprDef.ECheckType(toType1(d),haxe.macro.ComplexType.TPath({ pack : ["haxe","macro"], name : "Expr", sub : "TypeDefinition", params : []})), pos : p};
+				} catch( _ ) {
+					if( js.Boot.__instanceof(_,hxparse.NoMatch) ) {
+						var e = this.secureExpr();
+						return this.reifyExpr(e);
+					} else throw(_);
+				}
 			}
 		}
 	}
@@ -13582,6 +13594,633 @@ haxeparser.HaxeParser.prototype = $extend(hxparse.Parser_haxeparser_HaxeTokenSou
 	}
 	,__class__: haxeparser.HaxeParser
 });
+haxeparser._HaxeParser = {};
+haxeparser._HaxeParser.Reificator = function(inMacro) {
+	this.curPos = null;
+	this.inMacro = inMacro;
+};
+$hxClasses["haxeparser._HaxeParser.Reificator"] = haxeparser._HaxeParser.Reificator;
+haxeparser._HaxeParser.Reificator.__name__ = ["haxeparser","_HaxeParser","Reificator"];
+haxeparser._HaxeParser.Reificator.prototype = {
+	curPos: null
+	,inMacro: null
+	,mkEnum: function(ename,name,vl,p) {
+		var constr = { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent(name)), pos : p};
+		switch(vl.length) {
+		case 0:
+			return constr;
+		default:
+			return { expr : haxe.macro.ExprDef.ECall(constr,vl), pos : p};
+		}
+	}
+	,toConst: function(c,p) {
+		var _g = this;
+		var cst = function(n,v) {
+			return _g.mkEnum("Constant",n,[{ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CString(v)), pos : p}],p);
+		};
+		switch(c[1]) {
+		case 0:
+			var i = c[2];
+			return cst("CInt",i);
+		case 2:
+			var s = c[2];
+			return cst("CString",s);
+		case 1:
+			var s1 = c[2];
+			return cst("CFloat",s1);
+		case 3:
+			var s2 = c[2];
+			return cst("CIdent",s2);
+		case 4:
+			var o = c[3];
+			var r = c[2];
+			return this.mkEnum("Constant","CRegexp",[{ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CString(r)), pos : p},{ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CString(o)), pos : p}],p);
+		}
+	}
+	,toBinop: function(o,p) {
+		var _g = this;
+		var op = function(n) {
+			return _g.mkEnum("Binop",n,[],p);
+		};
+		switch(o[1]) {
+		case 0:
+			return op("OpAdd");
+		case 1:
+			return op("OpMult");
+		case 2:
+			return op("OpDiv");
+		case 3:
+			return op("OpSub");
+		case 4:
+			return op("OpAssign");
+		case 5:
+			return op("OpEq");
+		case 6:
+			return op("OpNotEq");
+		case 7:
+			return op("OpGt");
+		case 8:
+			return op("OpGte");
+		case 9:
+			return op("OpLt");
+		case 10:
+			return op("OpLte");
+		case 11:
+			return op("OpAnd");
+		case 12:
+			return op("OpOr");
+		case 13:
+			return op("OpXor");
+		case 14:
+			return op("OpBoolAnd");
+		case 15:
+			return op("OpBoolOr");
+		case 16:
+			return op("OpShl");
+		case 17:
+			return op("OpShr");
+		case 18:
+			return op("OpUShr");
+		case 19:
+			return op("OpMod");
+		case 20:
+			var o1 = o[2];
+			return this.mkEnum("Binop","OpAssignOp",[this.toBinop(o1,p)],p);
+		case 21:
+			return op("OpInterval");
+		case 22:
+			return op("OpArrow");
+		}
+	}
+	,toString: function(s,p) {
+		var len = s.length;
+		if(len > 1 && s.charAt(0) == "$") return { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent(HxOverrides.substr(s,1,null))), pos : p}; else return { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CString(s)), pos : p};
+	}
+	,toArray: function(f,a,p) {
+		var vals = [];
+		var _g = 0;
+		while(_g < a.length) {
+			var v = a[_g];
+			++_g;
+			vals.push(f(v,p));
+		}
+		var e = { pos : p, expr : haxe.macro.ExprDef.EArrayDecl(vals)};
+		return e;
+	}
+	,toNull: function(p) {
+		return { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent("null")), pos : p};
+	}
+	,toOpt: function(f,v,p) {
+		if(v == null) return this.toNull(p); else return f(v,p);
+	}
+	,toBool: function(o,p) {
+		var s;
+		if(o) s = "true"; else s = "false";
+		return { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent(s)), pos : p};
+	}
+	,toObj: function(fields,p) {
+		return { expr : haxe.macro.ExprDef.EObjectDecl(fields), pos : p};
+	}
+	,toTParam: function(t,p) {
+		var n;
+		var v;
+		switch(t[1]) {
+		case 0:
+			var t1 = t[2];
+			n = "TPType";
+			v = this.toCType(t1,p);
+			break;
+		case 1:
+			var e = t[2];
+			n = "TPExpr";
+			v = this.toExpr(e,p);
+			break;
+		}
+		return this.mkEnum("TypeParam",n,[v],p);
+	}
+	,toTPath: function(t,p) {
+		var fields = [{ field : "pack", expr : this.toArray($bind(this,this.toString),t.pack,p)},{ field : "name", expr : this.toString(t.name,p)},{ field : "params", expr : this.toArray($bind(this,this.toTParam),t.params,p)}];
+		if(t.sub != null) fields.push({ field : "sub", expr : this.toString(t.sub,p)});
+		return this.toObj(fields,p);
+	}
+	,toCType: function(t,p) {
+		var _g = this;
+		var ct = function(n,vl) {
+			return _g.mkEnum("ComplexType",n,vl,p);
+		};
+		switch(t[1]) {
+		case 0:
+			var t1 = t[2];
+			if(t[2].sub == null) switch(t[2].params.length) {
+			case 0:
+				switch(t[2].pack.length) {
+				case 0:
+					var n1 = t[2].name;
+					if(n1.charAt(0) == "$") return this.toString(n1,p); else return ct("TPath",[this.toTPath(t1,p)]);
+					break;
+				default:
+					return ct("TPath",[this.toTPath(t1,p)]);
+				}
+				break;
+			default:
+				return ct("TPath",[this.toTPath(t1,p)]);
+			} else switch(t[2].sub) {
+			default:
+				return ct("TPath",[this.toTPath(t1,p)]);
+			}
+			break;
+		case 1:
+			var ret = t[3];
+			var args = t[2];
+			return ct("TFunction",[this.toArray($bind(this,this.toCType),args,p),this.toCType(ret,p)]);
+		case 2:
+			var fields = t[2];
+			return ct("TAnonymous",[this.toArray($bind(this,this.toCField),fields,p)]);
+		case 3:
+			var t2 = t[2];
+			return ct("TParent",[this.toCType(t2,p)]);
+		case 4:
+			var fields1 = t[3];
+			var tl = t[2];
+			return ct("TExtend",[this.toArray($bind(this,this.toTPath),tl,p),this.toArray($bind(this,this.toCField),fields1,p)]);
+		case 5:
+			var t3 = t[2];
+			return ct("TOptional",[this.toCType(t3,p)]);
+		}
+	}
+	,toFun: function(f,p) {
+		var _g = this;
+		var farg = function(vv,p1) {
+			var n = vv.name;
+			var o = vv.opt;
+			var t = vv.type;
+			var e = vv.value;
+			var fields = [{ field : "name", expr : _g.toString(n,p1)},{ field : "opt", expr : _g.toBool(o,p1)},{ field : "type", expr : _g.toOpt($bind(_g,_g.toCType),t,p1)}];
+			if(e != null) fields.push({ field : "value", expr : _g.toExpr(e,p1)});
+			return _g.toObj(fields,p1);
+		};
+		var fparam;
+		var fparam1 = null;
+		fparam1 = function(t1,p2) {
+			var fields1 = [{ field : "name", expr : _g.toString(t1.name,p2)},{ field : "constraints", expr : _g.toArray($bind(_g,_g.toCType),t1.constraints,p2)},{ field : "params", expr : _g.toArray(fparam1,t1.params,p2)}];
+			return _g.toObj(fields1,p2);
+		};
+		fparam = fparam1;
+		var fields2 = [{ field : "args", expr : this.toArray(farg,f.args,p)},{ field : "ret", expr : this.toOpt($bind(this,this.toCType),f.ret,p)},{ field : "expr", expr : this.toOpt($bind(this,this.toExpr),f.expr,p)},{ field : "params", expr : this.toArray(fparam,f.params,p)}];
+		return this.toObj(fields2,p);
+	}
+	,toAccess: function(a,p) {
+		var n;
+		var n1;
+		switch(a[1]) {
+		case 0:
+			n1 = "APublic";
+			break;
+		case 1:
+			n1 = "APrivate";
+			break;
+		case 2:
+			n1 = "AStatic";
+			break;
+		case 3:
+			n1 = "AOverride";
+			break;
+		case 4:
+			n1 = "ADynamic";
+			break;
+		case 5:
+			n1 = "AInline";
+			break;
+		case 6:
+			n1 = "AMacro";
+			break;
+		}
+		return this.mkEnum("Access",n1,[],p);
+	}
+	,toCField: function(f,p) {
+		var _g = this;
+		var p2 = f.pos;
+		var toFType = function(k) {
+			var n;
+			var vl;
+			switch(k[1]) {
+			case 0:
+				var e = k[3];
+				var ct = k[2];
+				n = "FVar";
+				vl = [_g.toOpt($bind(_g,_g.toCType),ct,p),_g.toOpt($bind(_g,_g.toExpr),e,p)];
+				break;
+			case 1:
+				var f1 = k[2];
+				n = "FFun";
+				vl = [_g.toFun(f1,p)];
+				break;
+			case 2:
+				var e1 = k[5];
+				var t = k[4];
+				var set = k[3];
+				var get = k[2];
+				n = "FProp";
+				vl = [_g.toString(get,p),_g.toString(set,p),_g.toOpt($bind(_g,_g.toCType),t,p),_g.toOpt($bind(_g,_g.toExpr),e1,p)];
+				break;
+			}
+			return _g.mkEnum("FieldType",n,vl,p);
+		};
+		var fields = [];
+		fields.push({ field : "name", expr : this.toString(f.name,p)});
+		if(f.doc != null) fields.push({ field : "doc", expr : this.toString(f.doc,p)});
+		if(f.access != null) fields.push({ field : "access", expr : this.toArray($bind(this,this.toAccess),f.access,p)});
+		fields.push({ field : "kind", expr : toFType(f.kind)});
+		fields.push({ field : "pos", expr : this.toPos(f.pos)});
+		if(f.meta != null) fields.push({ field : "meta", expr : this.toMeta(f.meta,p)});
+		return this.toObj(fields,p);
+	}
+	,toMeta: function(m,p) {
+		var _g = this;
+		return this.toArray(function(me,_) {
+			var fields = [{ field : "name", expr : _g.toString(me.name,me.pos)},{ field : "params", expr : _g.toExprArray(me.params,me.pos)},{ field : "pos", expr : _g.toPos(me.pos)}];
+			return _g.toObj(fields,me.pos);
+		},m,p);
+	}
+	,toPos: function(p) {
+		if(this.curPos != null) return this.curPos;
+		var file = { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CString(p.file)), pos : p};
+		var pmin = { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CInt(p.min == null?"null":"" + p.min)), pos : p};
+		var pmax = { expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CInt(p.max == null?"null":"" + p.max)), pos : p};
+		if(this.inMacro) return { expr : haxe.macro.ExprDef.EUntyped({ expr : haxe.macro.ExprDef.ECall({ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent("$mk_pos")), pos : p},[file,pmin,pmax]), pos : p}), pos : p}; else return this.toObj([{ field : "file", expr : file},{ field : "min", expr : pmin},{ field : "max", expr : pmax}],p);
+	}
+	,toExprArray: function(a,p) {
+		if(a.length > 0) {
+			var _g = a[0].expr;
+			switch(_g[1]) {
+			case 29:
+				var e1 = _g[3];
+				var md = _g[2];
+				if(md.name == "$a" && md.params.length == 0) {
+					var _g1 = e1.expr;
+					switch(_g1[1]) {
+					case 6:
+						var el = _g1[2];
+						return this.toExprArray(el,p);
+					default:
+						return e1;
+					}
+				}
+				break;
+			default:
+			}
+		}
+		return this.toArray($bind(this,this.toExpr),a,p);
+	}
+	,toExpr: function(e,_) {
+		var _g = this;
+		var p = e.pos;
+		var expr = function(n,vl) {
+			var e1 = _g.mkEnum("ExprDef",n,vl,p);
+			return _g.toObj([{ field : "expr", expr : e1},{ field : "pos", expr : _g.toPos(p)}],p);
+		};
+		var loop = function(e2) {
+			return _g.toExpr(e2,e2.pos);
+		};
+		{
+			var _g1 = e.expr;
+			switch(_g1[1]) {
+			case 0:
+				var c = _g1[2];
+				switch(_g1[2][1]) {
+				case 3:
+					var n1 = _g1[2][2];
+					if(n1.charAt(0) == "$" && n1.length > 1) return this.toString(n1,p); else return expr("EConst",[this.toConst(c,p)]);
+					break;
+				default:
+					return expr("EConst",[this.toConst(c,p)]);
+				}
+				break;
+			case 1:
+				var e21 = _g1[3];
+				var e11 = _g1[2];
+				return expr("EArray",[loop(e11),loop(e21)]);
+			case 2:
+				var e22 = _g1[4];
+				var e12 = _g1[3];
+				var op = _g1[2];
+				return expr("EBinop",[this.toBinop(op,p),loop(e12),loop(e22)]);
+			case 3:
+				var s = _g1[3];
+				var e3 = _g1[2];
+				return expr("EField",[loop(e3),this.toString(s,p)]);
+			case 4:
+				var e4 = _g1[2];
+				return expr("EParenthesis",[loop(e4)]);
+			case 5:
+				var fl = _g1[2];
+				return expr("EObjectDecl",[this.toArray(function(f,p2) {
+					return _g.toObj([{ field : "field", expr : _g.toString(f.field,p)},{ field : "expr", expr : loop(f.expr)}],p2);
+				},fl,p)]);
+			case 6:
+				var el = _g1[2];
+				return expr("EArrayDecl",[this.toExprArray(el,p)]);
+			case 7:
+				var el1 = _g1[3];
+				var e5 = _g1[2];
+				return expr("ECall",[loop(e5),this.toExprArray(el1,p)]);
+			case 8:
+				var el2 = _g1[3];
+				var t = _g1[2];
+				return expr("ENew",[this.toTPath(t,p),this.toExprArray(el2,p)]);
+			case 9:
+				var e6 = _g1[4];
+				var isPostfix = _g1[3];
+				var op1 = _g1[2];
+				var ops;
+				switch(op1[1]) {
+				case 0:
+					ops = "OpIncrement";
+					break;
+				case 1:
+					ops = "OpDecrement";
+					break;
+				case 2:
+					ops = "OpNot";
+					break;
+				case 3:
+					ops = "OpNeg";
+					break;
+				case 4:
+					ops = "OpNegBits";
+					break;
+				}
+				var op2 = this.mkEnum("Unop",ops,[],p);
+				return expr("EUnop",[op2,this.toBool(isPostfix,p),loop(e6)]);
+			case 10:
+				var vl1 = _g1[2];
+				return expr("EVars",[this.toArray(function(vv,p1) {
+					var name = vv.name;
+					var type = vv.type;
+					var expr1 = vv.expr;
+					var fields = [{ field : "name", expr : _g.toString(name,p1)},{ field : "type", expr : _g.toOpt($bind(_g,_g.toCType),type,p1)},{ field : "expr", expr : _g.toOpt($bind(_g,_g.toExpr),expr1,p1)}];
+					return _g.toObj(fields,p1);
+				},vl1,p)]);
+			case 11:
+				var f1 = _g1[3];
+				var name1 = _g1[2];
+				return expr("EFunction",[this.toOpt($bind(this,this.toString),name1,p),this.toFun(f1,p)]);
+			case 12:
+				var el3 = _g1[2];
+				return expr("EBlock",[this.toExprArray(el3,p)]);
+			case 13:
+				var e23 = _g1[3];
+				var e13 = _g1[2];
+				return expr("EFor",[loop(e13),loop(e23)]);
+			case 14:
+				var e24 = _g1[3];
+				var e14 = _g1[2];
+				return expr("EIn",[loop(e14),loop(e24)]);
+			case 15:
+				var eelse = _g1[4];
+				var e25 = _g1[3];
+				var e15 = _g1[2];
+				return expr("EIf",[loop(e15),loop(e25),this.toOpt($bind(this,this.toExpr),eelse,p)]);
+			case 16:
+				var normalWhile = _g1[4];
+				var e26 = _g1[3];
+				var e16 = _g1[2];
+				return expr("EWhile",[loop(e16),loop(e26),this.toBool(normalWhile,p)]);
+			case 17:
+				var def = _g1[4];
+				var cases = _g1[3];
+				var e17 = _g1[2];
+				var scase = function(swc,p3) {
+					var el4 = swc.values;
+					var eg = swc.guard;
+					var e7 = swc.expr;
+					return _g.toObj([{ field : "values", expr : _g.toExprArray(el4,p3)},{ field : "guard", expr : _g.toOpt($bind(_g,_g.toExpr),eg,p3)},{ field : "expr", expr : _g.toOpt($bind(_g,_g.toExpr),e7,p3)}],p3);
+				};
+				return expr("ESwitch",[loop(e17),this.toArray(scase,cases,p),this.toOpt(function(def2,p4) {
+					return _g.toOpt(function(def3,p5) {
+						return _g.toExpr(def3,p5);
+					},def2,p4);
+				},def,p)]);
+			case 18:
+				var catches = _g1[3];
+				var e18 = _g1[2];
+				var scatch = function(c1,p6) {
+					var n2 = c1.name;
+					var t1 = c1.type;
+					var e8 = c1.expr;
+					return _g.toObj([{ field : "name", expr : _g.toString(n2,p6)},{ field : "type", expr : _g.toCType(t1,p6)},{ field : "expr", expr : loop(e8)}],p6);
+				};
+				return expr("ETry",[loop(e18),this.toArray(scatch,catches,p)]);
+			case 19:
+				var eo = _g1[2];
+				return expr("EReturn",[this.toOpt($bind(this,this.toExpr),eo,p)]);
+			case 20:
+				return expr("EBreak",[]);
+			case 21:
+				return expr("EContinue",[]);
+			case 22:
+				var e9 = _g1[2];
+				return expr("EUntyped",[loop(e9)]);
+			case 23:
+				var e10 = _g1[2];
+				return expr("EThrow",[loop(e10)]);
+			case 24:
+				var ct = _g1[3];
+				var e19 = _g1[2];
+				return expr("ECast",[loop(e19),this.toOpt($bind(this,this.toCType),ct,p)]);
+			case 25:
+				var flag = _g1[3];
+				var e20 = _g1[2];
+				return expr("EDisplay",[loop(e20),this.toBool(flag,p)]);
+			case 26:
+				var t2 = _g1[2];
+				return expr("EDisplayNew",[this.toTPath(t2,p)]);
+			case 27:
+				var e31 = _g1[4];
+				var e27 = _g1[3];
+				var e110 = _g1[2];
+				return expr("ETernary",[loop(e110),loop(e27),loop(e31)]);
+			case 28:
+				var ct1 = _g1[3];
+				var e111 = _g1[2];
+				return expr("ECheckType",[loop(e111),this.toCType(ct1,p)]);
+			case 29:
+				var e112 = _g1[3];
+				var md = _g1[2];
+				var _g11 = md.name;
+				switch(_g11) {
+				case "$":case "$e":
+					return e112;
+				case "$a":
+					{
+						var _g2 = e112.expr;
+						switch(_g2[1]) {
+						case 6:
+							var el5 = _g2[2];
+							return expr("EArrayDecl",[this.toExprArray(el5,p)]);
+						default:
+							return expr("EArrayDecl",[e112]);
+						}
+					}
+					break;
+				case "$b":
+					return expr("EBlock",[e112]);
+				case "$v":
+					return { expr : haxe.macro.ExprDef.ECall({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent("haxe")), pos : p},"macro"), pos : p},"Context"), pos : p},"makeExpr"), pos : p},[e,this.toPos(e.pos)]), pos : p};
+				case "$i":
+					return expr("EConst",[this.mkEnum("Constant","CIdent",[e112],e112.pos)]);
+				case "$p":
+					return { expr : haxe.macro.ExprDef.ECall({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EField({ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent("haxe")), pos : p},"macro"), pos : p},"ExprTools"), pos : p},"toFieldExpr"), pos : p},[e]), pos : p};
+				case ":pos":
+					if(md.params.length == 1) {
+						var old = this.curPos;
+						this.curPos = md.params[0];
+						var e28 = loop(e112);
+						this.curPos = old;
+						return e28;
+					} else return expr("EMeta",[this.toObj([{ field : "name", expr : this.toString(md.name,p)},{ field : "params", expr : this.toExprArray(md.params,p)},{ field : "pos", expr : this.toPos(p)}],p),loop(e112)]);
+					break;
+				default:
+					return expr("EMeta",[this.toObj([{ field : "name", expr : this.toString(md.name,p)},{ field : "params", expr : this.toExprArray(md.params,p)},{ field : "pos", expr : this.toPos(p)}],p),loop(e112)]);
+				}
+				break;
+			}
+		}
+	}
+	,toTParamDecl: function(t,p) {
+		var params = [];
+		var _g = 0;
+		var _g1 = t.params;
+		while(_g < _g1.length) {
+			var tp = _g1[_g];
+			++_g;
+			params.push(this.toTParamDecl(tp,p));
+		}
+		var constraints = [];
+		var _g2 = 0;
+		var _g11 = t.constraints;
+		while(_g2 < _g11.length) {
+			var c = _g11[_g2];
+			++_g2;
+			constraints.push(this.toCType(c,p));
+		}
+		return this.toObj([{ field : "name", expr : this.toString(t.name,p)},{ field : "params", expr : { expr : haxe.macro.ExprDef.EArrayDecl(params), pos : p}},{ field : "constraints", expr : { expr : haxe.macro.ExprDef.EArrayDecl(constraints), pos : p}}],p);
+	}
+	,toTypeDef: function(td) {
+		var p = td.pos;
+		{
+			var _g = td.decl;
+			switch(_g[1]) {
+			case 0:
+				var d = _g[2];
+				var ext = null;
+				var impl = [];
+				var interf = false;
+				var _g1 = 0;
+				var _g2 = d.flags;
+				while(_g1 < _g2.length) {
+					var f = _g2[_g1];
+					++_g1;
+					switch(f[1]) {
+					case 1:case 2:
+						break;
+					case 0:
+						interf = true;
+						break;
+					case 3:
+						var t = f[2];
+						ext = this.toTPath(t,td.pos);
+						break;
+					case 4:
+						var i = f[2];
+						impl.push(this.toTPath(i,td.pos));
+						break;
+					}
+				}
+				var params = [];
+				var _g11 = 0;
+				var _g21 = d.params;
+				while(_g11 < _g21.length) {
+					var par = _g21[_g11];
+					++_g11;
+					params.push(this.toTParamDecl(par,p));
+				}
+				var isExtern = false;
+				var _g12 = 0;
+				var _g22 = d.flags;
+				try {
+					while(_g12 < _g22.length) {
+						var f1 = _g22[_g12];
+						++_g12;
+						switch(f1[1]) {
+						case 1:
+							isExtern = true;
+							throw "__break__";
+							break;
+						default:
+						}
+					}
+				} catch( e ) { if( e != "__break__" ) throw e; }
+				var kindParams = [];
+				if(ext == null) kindParams.push({ expr : haxe.macro.ExprDef.EConst(haxe.macro.Constant.CIdent("null")), pos : p}); else kindParams.push(ext);
+				kindParams.push({ expr : haxe.macro.ExprDef.EArrayDecl(impl), pos : p});
+				kindParams.push(this.toBool(interf,p));
+				var fields = [];
+				var _g13 = 0;
+				var _g23 = d.data;
+				while(_g13 < _g23.length) {
+					var d1 = _g23[_g13];
+					++_g13;
+					fields.push(this.toCField(d1,p));
+				}
+				return this.toObj([{ field : "pack", expr : { expr : haxe.macro.ExprDef.EArrayDecl([]), pos : p}},{ field : "name", expr : this.toString(d.name,p)},{ field : "pos", expr : this.toPos(p)},{ field : "meta", expr : this.toMeta(d.meta,p)},{ field : "params", expr : { expr : haxe.macro.ExprDef.EArrayDecl(params), pos : p}},{ field : "isExtern", expr : this.toBool(isExtern,p)},{ field : "kind", expr : this.mkEnum("TypeDefKind","TDClass",kindParams,p)},{ field : "fields", expr : { expr : haxe.macro.ExprDef.EArrayDecl(fields), pos : p}}],td.pos);
+			default:
+				throw "Invalid type for reification";
+			}
+		}
+	}
+	,__class__: haxeparser._HaxeParser.Reificator
+};
 var haxeprinter = {};
 haxeprinter.Printer = function() {
 	this.config = JSON.parse(haxe.Resource.getString("config"));
