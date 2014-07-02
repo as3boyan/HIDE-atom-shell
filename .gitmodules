@@ -1,0 +1,13 @@
+[submodule "libs/js/CodeMirror"]
+	path = libs/js/CodeMirror
+	url = https://github.com/marijnh/CodeMirror.git
+[submodule "libs/js/alertify.js"]
+	path = lib/js/alertify.js
+	url = https://github.com/fabien-d/alertify.js
+branch = 0.3
+[submodule "libs/hxparse"]
+	path = libs/hxparse
+	url = https://github.com/Simn/hxparse.git
+[submodule "libs/haxeparser"]
+	path = libs/haxeparser
+	url = https://github.com/Simn/haxeparser

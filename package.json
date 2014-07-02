@@ -1,0 +1,25 @@
+{
+  "name": "HIDE",
+  "version": "0.3.5",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-node-webkit-builder": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-watch": "^0.6.1"
+  },
+  "main": "core/index.html",
+  "window": {
+    "title": "HIDE",
+    "toolbar": false,
+    "frame": true,
+    "width": 800,
+    "height": 600,
+    "position": "center",
+    "min_width": 800,
+    "min_height": 600,
+    "show": true
+  }
+}
