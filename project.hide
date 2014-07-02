@@ -44,9 +44,17 @@
         }
     ]
     ,"files" : [
+         {
+             "path" : "src/Main.hx"
+            ,"useTabs" : true
+            ,"indentSize" : 4
+            ,"foldedRegions" : [
 
+            ]
+            ,"activeLine" : 84
+        }
     ]
-    ,"activeFile" : "externs/haxe-js-kit/atomshell/Package.hx"
+    ,"activeFile" : "src/Main.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : null

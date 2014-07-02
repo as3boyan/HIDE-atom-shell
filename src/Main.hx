@@ -1,4 +1,5 @@
 package ;
+import js.Node;
 import js.atomshell.browser.BrowserWindow;
 import core.HaxeHelper;
 import kha.KhaProject;
@@ -80,6 +81,8 @@ class Main
 			//}
 // 		}
 // 		);
+		
+		Node.process.chdir(Node.__dirname);
 		
         sync = true;
 		

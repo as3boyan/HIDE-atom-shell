@@ -301,6 +301,7 @@ var Main = function() { };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.main = function() {
+	js.Node.process.chdir(js.Node.__dirname);
 	Main.sync = true;
 	window.addEventListener("load",function(e) {
 		var splitter = core.Splitter.get();
@@ -19410,6 +19411,7 @@ haxeparser.HaxeLexer.regexp_options = hxparse.Lexer.buildRuleset([{ rule : "[gim
 	return { pmax : new hxparse.Position(lexer.source,lexer.pos - lexer.current.length,lexer.pos).pmax, opt : lexer.current};
 }}],"regexp_options");
 js.Node.process = process;
+js.Node.__dirname = __dirname;
 menu.BootstrapMenu.menus = new haxe.ds.StringMap();
 menu.BootstrapMenu.menuArray = new Array();
 newprojectdialog.NewProjectDialog.categories = new haxe.ds.StringMap();
