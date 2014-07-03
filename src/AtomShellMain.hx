@@ -22,7 +22,7 @@ class AtomShellMain
 			{				
 // 				var size = Screen.getPrimaryDisplay().workAreaSize;
 				
-				var windowOptions:BrowserWindowOptions = new BrowserWindowOptions();
+				var windowOptions:BrowserWindowOptions = new BrowserWindowOptions({});
 // 				windowOptions.skipTaskbar = true;
 // 				windowOptions.center = true;
 // 				windowOptions.width = size.width;
