@@ -19,10 +19,9 @@ class AtomShellMain
 			  );
 		
 		App.on(AppEvent.READY, function ()
-			{				
-// 				var size = Screen.getPrimaryDisplay().workAreaSize;
-				
-				var windowOptions:BrowserWindowOptions = new BrowserWindowOptions({});
+			{
+				var windowOptions:BrowserWindowOptions = {};
+				windowOptions.minWidth = 768;
 // 				windowOptions.skipTaskbar = true;
 // 				windowOptions.center = true;
 // 				windowOptions.width = size.width;
@@ -37,13 +36,6 @@ class AtomShellMain
 						mainBrowserWindow = null;
 					}
 				);
-				
-// 				mainBrowserWindow.webContents.on(BrowserWindow.WebContentsEvent.DID_FINISH_LOAD, function ()
-// 					{
-						
-// 					});
-				
-// 				Main.load();
 				
 				mainBrowserWindow.toggleDevTools();
 			}

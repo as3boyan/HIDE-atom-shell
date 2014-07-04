@@ -44,9 +44,17 @@
         }
     ]
     ,"files" : [
+         {
+             "path" : "src/core/PreserveWindowState.hx"
+            ,"useTabs" : true
+            ,"indentSize" : 4
+            ,"foldedRegions" : [
 
+            ]
+            ,"activeLine" : 180
+        }
     ]
-    ,"activeFile" : "externs/haxe-js-kit/js/atomshell/browser/App.hx"
+    ,"activeFile" : "src/core/PreserveWindowState.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : null

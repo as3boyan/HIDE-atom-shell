@@ -59,16 +59,6 @@ class Main
 
 	public static function main()
 	{
-// 		window = BrowserWindow.getAllWindows()[0];
-		
-// 		window.webContents.on(BrowserWindowWebContentsEvent.DID_FINISH_LOAD, function ()
-// 			{
-// 				PreserveWindowState.init();
-// 			});
-
-// 		window.showDevTools();
-// 		window.title = "HIDE";
-		
 // 		js.Node.process.on('uncaughtException', function (err)
 // 		{
 // 			trace(err);
@@ -88,6 +78,8 @@ class Main
 		
 		Browser.window.addEventListener("load", function (e):Void
 		{			
+			PreserveWindowState.init();
+			
 			var splitter = Splitter.get();
 			splitter.load();
 

@@ -659,16 +659,16 @@ class Editor
 				selectedFile.foldedRegions = foldedRegions;
 				selectedFile.activeLine = cursor.line;
 				
-				trace("folding regions saved successfully for" + Std.string(selectedFile));
+// 				trace("folding regions saved successfully for" + Std.string(selectedFile));
 			}
 			else
 			{
-				trace("cannot save folded regions for this document");
+// 				trace("cannot save folded regions for this document");
 			}
 		}
 		else
 		{
-			trace("unable to preserve code folding for" + Std.string(doc));
+// 			trace("unable to preserve code folding for" + Std.string(doc));
 		}
 	}
 

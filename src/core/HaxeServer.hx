@@ -1,4 +1,6 @@
 package core;
+import js.Browser;
+import js.atomshell.browser.BrowserWindow;
 import js.node.Net;
 import js.node.ChildProcess;
 
@@ -47,7 +49,9 @@ class HaxeServer
 		}
 		);
 
-// 		var window:BrowserWindow = BrowserWindow.getAllWindows()[0];
+// 		var browserWindow:BrowserWindow = BrowserWindow.getAllWindows()[0];
+		
+		Browser.window.addEventListener("beforeunload", terminate);
 		
 // 		window.on("close", function (e)
 // 		{
@@ -57,7 +61,7 @@ class HaxeServer
 // 		);
 	}
 	
-	public static function terminate():Void
+	public static function terminate(_):Void
 	{
 		if (haxeServer != null) 
 		{

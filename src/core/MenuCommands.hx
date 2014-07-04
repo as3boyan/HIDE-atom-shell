@@ -1,4 +1,5 @@
 package core;
+import js.atomshell.webpage.WebView;
 import js.atomshell.browser.App;
 import js.atomshell.browserandwebpage.Clipboard;
 import js.atomshell.browserandwebpage.Shell;
@@ -31,25 +32,26 @@ class MenuCommands
 
 		BootstrapMenu.getMenu("View").addMenuItem("Zoom In", 2, function ():Void
 		{
-// 			window.zoomLevel += 1;
+			var level = WebView.getZoomLevel();
+			WebView.setZoomLevel(level + 1);
 		}
 		, "Ctrl-Shift-+");
 
 		BootstrapMenu.getMenu("View").addMenuItem("Zoom Out", 3, function ():Void
 		{
-// 			window.zoomLevel -= 1;
+			var level = WebView.getZoomLevel();
+			WebView.setZoomLevel(level - 1);
 		}
 		, "Ctrl-Shift--");
 
 		BootstrapMenu.getMenu("View").addMenuItem("Reset", 4, function ():Void
 		{
-// 			window.zoomLevel = 0;
+			WebView.setZoomLevel(0);
 		}
 		, "Ctrl-Shift-0");
 		
 		BootstrapMenu.getMenu("View", 3).addMenuItem("Toggle Fullscreen", 1, function ():Void
 		{
-// 			window.toggleFullscreen();
 			window.setFullScreen(!window.isFullScreen());
 		}
 		, "F11");
@@ -79,7 +81,7 @@ class MenuCommands
 		}
 		, "Shift-F5");
 		
-		BootstrapMenu.getMenu("Developer Tools").addMenuItem("Console", 3, window.openDevTools);
+		BootstrapMenu.getMenu("Developer Tools").addMenuItem("Console", 3, window.toggleDevTools);
 		
 		BootstrapMenu.getMenu("Help").addMenuItem("Show code editor key bindings", 1, tabManagerInstance.openFileInNewTab.bind(Path.join("core", "bindings.txt")));
 		BootstrapMenu.getMenu("Help").addMenuItem("View HIDE repository on GitHub", 2, Shell.openExternal.bind("https://github.com/as3boyan/HIDE"));
@@ -141,7 +143,11 @@ class MenuCommands
 		//App.closeAllBrowserWindows
 		BootstrapMenu.getMenu("File").addMenuItem("Exit", 9, App.quit);
 		
-		BrowserWindow.getAllWindows()[0].on('close', tabManagerInstance.saveAll);
+		BrowserWindow.getAllWindows()[0].on(BrowserWindowEvent.CLOSE, function ()
+			{
+				tabManagerInstance.saveAll();
+			}
+		);
 		
 // 		BootstrapMenu.getMenu("Options").addMenuItem("Open haxelib manager", 1, DialogManager.showHaxelibManagerDialog);
 		BootstrapMenu.getMenu("Options").addMenuItem("Open settings", 1, tabManagerInstance.openFileInNewTab.bind(Path.join(SettingsWatcher.pathToFolder,"settings.json")));

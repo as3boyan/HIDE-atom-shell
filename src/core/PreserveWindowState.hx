@@ -1,6 +1,8 @@
 package core;
-import haxe.Json;
+import tjson.TJSON;
+import js.atomshell.browserandwebpage.Screen;
 import js.atomshell.browser.BrowserWindow;
+import js.node.JSON;
 import haxe.Timer;
 import js.Browser;
 
@@ -19,108 +21,104 @@ class PreserveWindowState
 	static var currWinMode:String;
 	static var resizeTimeout:Timer;
 	static var isMaximizationEvent:Bool = false;
-	static var window:BrowserWindow;
+	static var browserWindow:BrowserWindow;
 	
 	public static function init():Void
 	{
-		window = BrowserWindow.getAllWindows()[0];
+		browserWindow = BrowserWindow.getAllWindows()[0];
 		
-		initBrowserWindowState();
+		initWindowState();
 
-		window.on('maximize', function ():Void
-		{
-				isMaximizationEvent = true;
-				currWinMode = 'maximized';
-		});
+// 		window.on('maximize', function ():Void
+// 		{
+// 				isMaximizationEvent = true;
+// 				currWinMode = 'maximized';
+// 		});
 
-		window.on('unmaximize', function ():Void
-		{
-				currWinMode = 'normal';
-				restoreBrowserWindowState();
-		});
+// 		window.on('unmaximize', function ():Void
+// 		{
+// 				currWinMode = 'normal';
+// 				restoreBrowserWindowState();
+// 		});
 
-		window.on('minimize', function ():Void
-		{
-				currWinMode = 'minimized';
-		});
+// 		window.on('minimize', function ():Void
+// 		{
+// 				currWinMode = 'minimized';
+// 		});
 
-		window.on('restore', function ():Void
-		{
-				currWinMode = 'normal';
-		});
+// 		window.on('restore', function ():Void
+// 		{
+// 				currWinMode = 'normal';
+// 		});
 		
-		Browser.window.addEventListener('resize', function (e) 
-		{
-			// resize event is fired many times on one resize action,
-			// this hack with setTiemout forces it to fire only once
-			
-			if (resizeTimeout != null)
-			{
-				resizeTimeout.stop();
-			}
-			
-			resizeTimeout = new Timer(500);
-			resizeTimeout.run = 
-			function () 
-			{
-				// on MacOS you can resize maximized window, so it's no longer maximized
-				if (isMaximizationEvent) 
-				{
-					// first resize after maximization event should be ignored
-					isMaximizationEvent = false;
-				} 
-				else 
-				{
-					if (currWinMode == 'maximized') 
-					{
-						currWinMode = 'normal';
-					}
-				}
-				
-				resizeTimeout.stop();
-				
-				dumpBrowserWindowState();   
-			};
-				
-		}, false);
+		Browser.window.addEventListener('resize', onResize, false);
 		
-		window.on("close", function (e)
-		{
-			saveBrowserWindowState();
-			window.close();//true
-		}
-		);
+		Browser.window.addEventListener("beforeunload", saveWindowState);
 	}
 	
-	static function initBrowserWindowState():Void
+	static function onResize(_)
+	{
+		// resize event is fired many times on one resize action,
+		// this hack with setTiemout forces it to fire only once
+
+		if (resizeTimeout != null)
+		{
+			resizeTimeout.stop();
+		}
+
+		resizeTimeout = new Timer(500);
+		resizeTimeout.run = 
+		function () 
+		{
+			// on MacOS you can resize maximized window, so it's no longer maximized
+// 				if (isMaximizationEvent) 
+// 				{
+// 					// first resize after maximization event should be ignored
+// 					isMaximizationEvent = false;
+// 				} 
+// 				else 
+// 				{
+// 					if (currWinMode == 'maximized') 
+// 					{
+// 						currWinMode = 'normal';
+// 					}
+// 				}
+
+			resizeTimeout.stop();
+
+			dumpWindowState();   
+		};
+	}
+	
+	static function initWindowState():Void
 	{
 		var windowState = Browser.getLocalStorage().getItem("windowState");
 				
 		if (windowState != null)
 		{
-			winState = Json.parse(windowState);
+			winState = TJSON.parse(windowState);
 		}
 				
 		if (winState != null) 
 		{
-			currWinMode = winState.mode;
-			if (currWinMode == 'maximized') 
-			{
-				window.maximize();
-			} 
-			else 
-			{
-				restoreBrowserWindowState();
-			}
+// 			currWinMode = winState.mode;
+// 			if (currWinMode == 'maximized') 
+// 			{
+// 				window.maximize();
+// 			} 
+// 			else 
+// 			{
+				restoreWindowState();
+// 			}
 		} 
 		else 
 		{
-			currWinMode = 'normal';
-			dumpBrowserWindowState();
+// 			currWinMode = 'normal';
+			dumpWindowState();
 		}
 	}
 
-	static function dumpBrowserWindowState():Void
+	static function dumpWindowState():Void
 	{
 		if (winState == null) 
 		{
@@ -128,41 +126,76 @@ class PreserveWindowState
 		}
 		
 		// we don't want to save minimized state, only maximized or normal
-		if (currWinMode == 'maximized') 
-		{
-			winState.mode = 'maximized';
-		}
-		else 
-		{
-			winState.mode = 'normal';
-		}
+// 		if (currWinMode == 'maximized') 
+// 		{
+// 			winState.mode = 'maximized';
+// 		}
+// 		else 
+// 		{
+// 			winState.mode = 'normal';
+// 		}
 		
 		// when window is maximized you want to preserve normal
 		// window dimensions to restore them later (even between sessions)
-		if (currWinMode == 'normal') 
+// 		if (currWinMode == 'normal') 
+// 		{
+			var pos = browserWindow.getPosition();
+			if (pos != null)
+			{
+				winState.x = pos[0];
+				winState.y = pos[1];
+			}
+		
+			var size = browserWindow.getSize();
+			if (size != null)
+			{
+				winState.width = size[0];
+				winState.height = size[1];
+			}
+
+// 		}
+	}
+
+	static function restoreWindowState():Void
+	{
+		var workArea = Screen.getPrimaryDisplay().workArea;
+		
+		var x = winState.x;
+		var y = winState.y;
+		
+		var width = winState.width;
+		var height = winState.height;
+		
+		if (x < 0)
 		{
-			var pos = window.getPosition();
-			trace(pos);
-// 			winState.x = window.x;
-// 			winState.y = window.y;
-			var size = window.getSize();
-			trace(size);
-// 			winState.width = window.width;
-// 			winState.height = window.height;
+			x = workArea.x;
 		}
+
+		if (y < 0)
+		{
+			y = workArea.y;
+		}
+			
+		if (width > workArea.width)
+		{
+			width = workArea.width;
+		}
+
+		if (height > workArea.height)
+		{
+			height = workArea.height;
+		}
+		
+		browserWindow.setSize(width, height);
+		browserWindow.setPosition(x, y);
 	}
 
-	static function restoreBrowserWindowState():Void
+	static function saveWindowState(_):Void
 	{
-		window.setSize(winState.width, winState.height);
-		window.setPosition(winState.x, winState.y);
-	}
-
-	static function saveBrowserWindowState():Void
-	{
-		dumpBrowserWindowState();
-		Browser.getLocalStorage().setItem("windowState", Json.stringify(winState));
-	}
-        
+		resizeTimeout.stop();
+		Browser.window.removeEventListener("resize", onResize, false);
+		
+// 		dumpWindowState();
+		Browser.getLocalStorage().setItem("windowState", TJSON.encode(winState));
+	}       
 }
-
