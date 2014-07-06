@@ -1968,6 +1968,8 @@ completion.GoToDeclaration.prototype = {
 						tabManagerInstance.openFileInNewTab(path,true,function() {
 							var cm1 = cm.Editor.editor;
 							cm1.centerOnLine(from2.line);
+							cm1.focus();
+							cm1.setCursor(to2);
 							var highlightRange = cm.HighlightRange.get();
 							highlightRange.highlight(cm1,from2,to2);
 						});
@@ -5719,7 +5721,7 @@ filetree.FileTree.prototype = {
 			this.watcher = null;
 		}
 		var classpathWalker = parser.ClasspathWalker.get();
-		var config = { path : path, listener : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
+		var config = { path : path, listeners : { change : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
 			console.log(changeType);
 			console.log(filePath);
 			console.log(fileCurrentStat);
@@ -5743,9 +5745,21 @@ filetree.FileTree.prototype = {
 				if(Path__20.extname(filePath) != "") classpathWalker.removeFile(filePath);
 				break;
 			default:
+				console.log(filePath + " is updated");
 			}
+		}, log : function(logLevel,args) {
+			console.log(logLevel);
+			console.log(args);
+		}, watching : function(err,isWatching) {
+			console.log(err);
+			console.log(isWatching);
+		}, error : function(err1) {
+			console.log(err1);
+		}}, next : function(err2,watchers) {
+			console.log(err2);
+			console.log(watchers);
 		}};
-		config.interval = 3000;
+		config.interval = 2100;
 		this.watcher = Watchr__10.watch(config);
 		this.lastProjectName = projectName;
 		this.lastProjectPath = path;
@@ -18008,14 +18022,15 @@ tabmanager.Tab.prototype = {
 	,startWatcher: function() {
 		var _g = this;
 		this.watcher = watchers.Watcher.watchFileForUpdates(this.path,function() {
+			console.log(_g.path + " is updated");
 			if(_g.ignoreNextUpdates <= 0) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile)); else _g.ignoreNextUpdates--;
-		});
+		},2100);
 	}
 	,reloadFile: function() {
 		var _g = this;
 		var tabManagerInstance = tabmanager.TabManager.get();
-		tabManagerInstance.openFile(this.path,function(code) {
-			_g.doc.setValue(code);
+		tabManagerInstance.openFile(this.path,function(contents) {
+			_g.doc.setValue(contents);
 			_g.doc.markClean();
 			_g.setChanged(false);
 		});
@@ -18027,7 +18042,10 @@ tabmanager.Tab.prototype = {
 	}
 	,remove: function() {
 		this.li.remove();
-		if(this.watcher != null) this.watcher.close();
+		if(this.watcher != null) {
+			this.watcher.close();
+			this.watcher = null;
+		}
 	}
 	,save: function() {
 		this.ignoreNextUpdates++;
@@ -19070,10 +19088,22 @@ watchers.Watcher = function() { };
 $hxClasses["watchers.Watcher"] = watchers.Watcher;
 watchers.Watcher.__name__ = ["watchers","Watcher"];
 watchers.Watcher.watchFileForUpdates = function(_path,onUpdate,_interval) {
-	var config = { path : _path, listener : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
+	var config = { path : _path, listeners : { change : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
 		if(changeType == "update") onUpdate();
+	}, log : function(logLevel,args) {
+		console.log(logLevel);
+		console.log(args);
+	}, watching : function(err,isWatching) {
+		console.log(err);
+		console.log(isWatching);
+	}, error : function(err1) {
+		console.log(err1);
+	}}, next : function(err2,watchers) {
+		console.log(err2);
+		console.log(watchers);
 	}};
 	if(_interval != null) config.interval = _interval;
+	config.persistent = true;
 	var watcher = Watchr__10.watch(config);
 	return watcher;
 };

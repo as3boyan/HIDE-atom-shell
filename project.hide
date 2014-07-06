@@ -44,17 +44,9 @@
         }
     ]
     ,"files" : [
-         {
-             "path" : "src/core/PreserveWindowState.hx"
-            ,"useTabs" : true
-            ,"indentSize" : 4
-            ,"foldedRegions" : [
 
-            ]
-            ,"activeLine" : 180
-        }
     ]
-    ,"activeFile" : "src/core/PreserveWindowState.hx"
+    ,"activeFile" : "externs/alertify/Alertify.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : null

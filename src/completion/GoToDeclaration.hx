@@ -71,6 +71,8 @@ class GoToDeclaration
 												 {
 													 var cm = Editor.editor;
 													 cm.centerOnLine(from2.line);
+													 cm.focus();
+													 cm.setCursor(to2);
 													 
 													 var highlightRange = HighlightRange.get();
 													 highlightRange.highlight(cm, from2, to2);

@@ -601,8 +601,8 @@ class FileTree
 			
 		var config:WatchrConfig = {
 			path: path,
-			listener:
-				function (changeType, filePath, fileCurrentStat, filePreviousStat):Void 
+			listeners: {
+				change: function (changeType, filePath, fileCurrentStat, filePreviousStat):Void 
 				{
 					trace(changeType);
 					trace(filePath);
@@ -650,12 +650,32 @@ class FileTree
                             	classpathWalker.removeFile(filePath);
                     		}
 						default:
-							
+							trace(filePath + " is updated");
 					}
+				},
+				log: function (logLevel, args)
+				{
+					trace(logLevel);
+					trace(args);
+				},
+				watching: function (err, isWatching)
+				{
+					trace(err);
+					trace(isWatching);
+				},
+				error: function (err)
+				{
+					trace(err);
 				}
+			},
+			next: function (err, watchers)
+			{
+				trace(err);
+				trace(watchers);
+			}
 		};
 		
-		config.interval = 3000;
+		config.interval = 2100;
 		
 		watcher = Watchr.watch(config);
 		
