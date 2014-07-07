@@ -1,4 +1,6 @@
 package tabmanager;
+import js.npm.Pathwatcher;
+import haxe.Timer;
 import js.node.Fs;
 import js.html.MouseEvent;
 import js.html.Event;
@@ -19,16 +21,13 @@ class Tab
 	public var path:String;
 	public var doc:CodeMirror.Doc;
 	public var loaded:Bool;
-	public var mtime:Int;
+	public var mtime:Float;
 	var li:LIElement;
 	var span3:SpanElement;
 	var watcher:Dynamic;
-	var ignoreNextUpdates:Int;
 
 	public function new(_name:String, _path:String, _doc:CodeMirror.Doc, ?_save:Bool)
 	{
-		ignoreNextUpdates = 0;
-
 		name = _name;
 		doc = _doc;
 		path = _path;
@@ -84,28 +83,95 @@ class Tab
 		{
 			save();
 		}
-
+			
 		startWatcher();
 	}
 
 	public function startWatcher():Void
 	{
-		watcher = Watcher.watchFileForUpdates(path, function ():Void
-		{
-			trace(path + " is updated");
+		mtime = Date.now().getTime();
+		
+// 		watcher = Watcher.watchFileForUpdates(path, function ():Void
+// 		{
+// 			trace(path + " is updated");
 			
-			if (ignoreNextUpdates <= 0)
-			{
-				dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
-			}
-			else
-			{
-				ignoreNextUpdates--;
-			}
-		}
-		, 2100);
+// 			checkStat();
+			
+// 		}
+// 		, 2100);
+		
+// 		trace("startWatcher");
+		
+		var watcher = Pathwatcher.watch(path, function (event, _path)
+									   {										
+										   switch (event)
+										   {
+											   case PathwatcherEvent.CHANGE:
+												   checkStat();
+											   case PathwatcherEvent.DELETE:
+												   checkIfExistsAndStartWatching();
+											   default:
+												   trace(event);
+
+										   }
+
+
+									   });
 	}
 
+	function checkIfExistsAndStartWatching()
+	{
+		 Timer.delay(function ()
+			 {											 
+				 Fs.exists(path, function (exists2)
+						  {														  
+							  var tabManagerInstance = TabManager.get();
+
+							  if (tabManagerInstance.tabMap.exists(path) && exists2 && Pathwatcher.getWatchedPaths().indexOf(path) == -1)
+							  {		
+								  Fs.stat(path, function (err, stat)
+										 {
+											 if (stat.mtime.getTime() > mtime)
+											 {
+												 dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
+											 }
+												 
+											 startWatcher();
+										 });
+							  }
+
+						  });
+			 }
+			 , 1500);
+	}
+	
+	function checkStat()
+	{
+		Fs.exists(path, function (exists)
+					 {
+						 if (exists)
+						 {
+							 Fs.stat(path, function (err, stats)
+							   {
+								   if (err == null)
+								   {
+									   if (stats.mtime.getTime() > mtime)
+									   {
+										   dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
+									   }
+
+								   }
+								   else
+								   {
+									   trace(err);
+								   }
+
+							   });
+						 }
+					 });
+		
+	}
+	
     function reloadFile()
     {
 		var tabManagerInstance = TabManager.get();
@@ -116,6 +182,7 @@ class Tab
             doc.setValue(contents);
 			doc.markClean();
 			setChanged(false);
+			mtime = Date.now().getTime();
         }
         );
     }
@@ -136,7 +203,7 @@ class Tab
 	{
 		li.remove();
 
-		if (watcher != null)
+		if (Pathwatcher.getWatchedPaths().indexOf(path) != -1 && watcher != null)
 		{
 			watcher.close();
 			watcher = null;
@@ -145,11 +212,11 @@ class Tab
 
 	public function save():Void
 	{
-		ignoreNextUpdates++;
-
 		Fs.writeFileSync(path, doc.getValue(), "utf8");
 		doc.markClean();
 		setChanged(false);
+		
+		mtime = Date.now().getTime();
 	}
 	
 	public function getElement():LIElement

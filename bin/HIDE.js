@@ -4064,10 +4064,10 @@ core.MenuCommands.add = function() {
 		};
 	})($bind(tabManagerInstance,tabManagerInstance.openFileInNewTab),Path__20.join("core","bindings.txt")));
 	menu.BootstrapMenu.getMenu("Help").addMenuItem("View HIDE repository on GitHub",2,function() {
-		return Shell__12.openExternal("https://github.com/as3boyan/HIDE");
+		return Shell__11.openExternal("https://github.com/as3boyan/HIDE");
 	});
 	menu.BootstrapMenu.getMenu("Help").addMenuItem("Report issue/request feature at GitHub issue tracker",3,function() {
-		return Shell__12.openExternal("https://github.com/as3boyan/HIDE/issues/new");
+		return Shell__11.openExternal("https://github.com/as3boyan/HIDE/issues/new");
 	});
 	menu.BootstrapMenu.getMenu("Help").addMenuItem("Open Haxe nightly build download URL",4,function() {
 		var serverUrl = "http://hxbuilds.s3-website-us-east-1.amazonaws.com/builds/haxe/";
@@ -4086,7 +4086,7 @@ core.MenuCommands.add = function() {
 		default:
 			throw "Utils class was not able to detect OS";
 		}
-		Shell__12.openExternal(serverUrl + target + "/haxe_latest.tar.gz");
+		Shell__11.openExternal(serverUrl + target + "/haxe_latest.tar.gz");
 	});
 	menu.BootstrapMenu.getMenu("Help").addMenuItem("About HIDE...",5,function() {
 		return HIDE.openPageInNewBrowserWindow(null,"about.html",{ toolbar : false});
@@ -4828,13 +4828,13 @@ core.RunProject.runProject = function() {
 		switch(runActionType) {
 		case 0:
 			var url = runActionText;
-			if(core.RunProject.isValidCommand(url)) Shell__12.openExternal(url);
+			if(core.RunProject.isValidCommand(url)) Shell__11.openExternal(url);
 			break;
 		case 1:
 			var path = runActionText;
 			if(core.RunProject.isValidCommand(path)) Fs__16.exists(path,function(exists) {
 				if(!exists) path = Path__20.join(projectaccess.ProjectAccess.path,path);
-				Shell__12.openItem(path);
+				Shell__11.openItem(path);
 			});
 			break;
 		case 2:
@@ -5038,10 +5038,10 @@ core.WelcomeScreen.prototype = {
 			})(link);
 		}
 		new $("#github").on("click",null,function() {
-			return Shell__12.openExternal("https://github.com/as3boyan/HIDE");
+			return Shell__11.openExternal("https://github.com/as3boyan/HIDE");
 		});
 		new $("#as3boyan").on("click",null,function() {
-			return Shell__12.openExternal("http://twitter.com/As3Boyan");
+			return Shell__11.openExternal("http://twitter.com/As3Boyan");
 		});
 	}
 	,show: function() {
@@ -5170,7 +5170,7 @@ dialogs.BrowseDirectoryWithDownloadButtonDialog.prototype = $extend(dialogs.Brow
 	,setDownloadButtonOptions: function(text,url) {
 		this.downloadButton.textContent = text;
 		this.downloadButton.onclick = function(e) {
-			Shell__12.openExternal(url);
+			Shell__11.openExternal(url);
 		};
 	}
 	,__class__: dialogs.BrowseDirectoryWithDownloadButtonDialog
@@ -5512,17 +5512,17 @@ filetree.FileTree.prototype = {
 			if(selectedItem2.value.type == "file") tabManager1.openFileInNewTab(selectedItem2.value.path); else new $("#filetree").jqxTree("expandItem",selectedItem2.element);
 		});
 		this.appendToContextMenu("Execute",function(selectedItem3) {
-			Shell__12.openItem(selectedItem3.value.path);
+			Shell__11.openItem(selectedItem3.value.path);
 		});
 		this.appendToContextMenu("Show Item In Folder",function(selectedItem4) {
-			Shell__12.showItemInFolder(selectedItem4.value.path);
+			Shell__11.showItemInFolder(selectedItem4.value.path);
 		});
 		this.appendToContextMenu("Rename...",function(selectedItem5) {
 			var path2 = selectedItem5.value.path;
 			Alertify.prompt(watchers.LocaleWatcher.getStringSync("Please enter new name for ") + path2,function(e2,str2) {
 				if(e2) {
 					var currentDirectory = Path__20.dirname(path2);
-					Mv__11.move(path2,Path__20.join(currentDirectory,str2),function(error1) {
+					Mv__10.move(path2,Path__20.join(currentDirectory,str2),function(error1) {
 						if(error1 == null) _g.load(); else Alertify.error(error1);
 					});
 				}
@@ -5544,7 +5544,7 @@ filetree.FileTree.prototype = {
 				break;
 			case "folder":
 				Alertify.confirm(watchers.LocaleWatcher.getStringSync("Remove folder ") + path3 + " ?",function(e4) {
-					if(e4) Remove__13.removeAsync(path3,{ },function(error3) {
+					if(e4) Remove__12.removeAsync(path3,{ },function(error3) {
 						if(error3 == null) {
 							new $("#filetree").jqxTree("removeItem",selectedItem6.element);
 							_g.attachContextMenu();
@@ -5624,7 +5624,7 @@ filetree.FileTree.prototype = {
 				var selectedItem10 = new $("#filetree").jqxTree("getSelectedItem");
 				var previousPath = selectedItem10.value.path;
 				var newPath = Path__20.join(topDirectory,path6,selectedItem10.label);
-				if(previousPath != newPath) Mv__11.move(previousPath,newPath,function(error4) {
+				if(previousPath != newPath) Mv__10.move(previousPath,newPath,function(error4) {
 					if(error4 == null) {
 						Alertify.success("File were successfully moved to " + newPath);
 						selectedItem10.value.path = newPath;
@@ -5721,46 +5721,18 @@ filetree.FileTree.prototype = {
 			this.watcher = null;
 		}
 		var classpathWalker = parser.ClasspathWalker.get();
-		var config = { path : path, listeners : { change : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
-			console.log(changeType);
-			console.log(filePath);
-			console.log(fileCurrentStat);
-			console.log(filePreviousStat);
-			switch(changeType) {
-			case "create":
-				console.log(changeType);
-				console.log(filePath);
-				Fs__16.stat(filePath,function(error,stat) {
-					if(error == null) {
-						if(stat.isFile()) {
-							if(changeType == "create") classpathWalker.addFile(filePath); else classpathWalker.removeFile(filePath);
-						} else if(stat.isDirectory()) {
-							console.log(changeType);
-							console.log(filePath);
-						}
-					} else console.log(error);
+		this.watcher = Pathwatcher__13.watch(path,function(event1,_path) {
+			switch(event1) {
+			case "change":
+				Fs__16.exists(_path,function(exists) {
+					if(exists) {
+					} else {
+					}
 				});
 				break;
-			case "delete":
-				if(Path__20.extname(filePath) != "") classpathWalker.removeFile(filePath);
-				break;
 			default:
-				console.log(filePath + " is updated");
 			}
-		}, log : function(logLevel,args) {
-			console.log(logLevel);
-			console.log(args);
-		}, watching : function(err,isWatching) {
-			console.log(err);
-			console.log(isWatching);
-		}, error : function(err1) {
-			console.log(err1);
-		}}, next : function(err2,watchers) {
-			console.log(err2);
-			console.log(watchers);
-		}};
-		config.interval = 2100;
-		this.watcher = Watchr__10.watch(config);
+		});
 		this.lastProjectName = projectName;
 		this.lastProjectPath = path;
 		filetree.FileTree.updateProjectMainHxml();
@@ -16789,23 +16761,6 @@ parser.ClasspathWalker.prototype = {
 			} else if(this.getFileIndex(path,list) == -1) list.push({ path : path, directory : this.getFileDirectory(path), displayText : completionInstance.processDisplayText(path), filename : Path__20.basename(path)});
 		}
 	}
-	,removeFile: function(path) {
-		var relativePath;
-		var index = -1;
-		var _g = 0;
-		var _g1 = [parser.ClassParser.haxeStdFileList,parser.ClassParser.filesList];
-		while(_g < _g1.length) {
-			var list = _g1[_g];
-			++_g;
-			if(projectaccess.ProjectAccess.path != null) {
-				relativePath = Path__20.relative(projectaccess.ProjectAccess.path,path);
-				index = this.getFileIndex(relativePath,list);
-				if(index != -1) HxOverrides.remove(list,list[index]);
-			}
-			index = this.getFileIndex(path,list);
-			if(index != -1) HxOverrides.remove(list,list[index]);
-		}
-	}
 	,walkProjectDirectory: function(path) {
 		var _g = this;
 		if(Main.sync) Walkdir__18.sync(path,{ },function(path1,stat) {
@@ -17935,7 +17890,7 @@ tabmanager.ContextMenu.createContextMenu = function() {
 	ul.appendChild(tabmanager.ContextMenu.createDivider());
 	ul.appendChild(tabmanager.ContextMenu.createContextMenuItem("Show Item In Folder",function() {
 		var path1 = tabmanager.ContextMenu.contextMenu.getAttribute("path");
-		Shell__12.showItemInFolder(path1);
+		Shell__11.showItemInFolder(path1);
 	}));
 	tabmanager.ContextMenu.contextMenu.appendChild(ul);
 	window.document.body.appendChild(tabmanager.ContextMenu.contextMenu);
@@ -17970,7 +17925,6 @@ tabmanager.ContextMenu.createDivider = function() {
 };
 tabmanager.Tab = function(_name,_path,_doc,_save) {
 	var _g = this;
-	this.ignoreNextUpdates = 0;
 	this.name = _name;
 	this.doc = _doc;
 	this.path = _path;
@@ -18015,16 +17969,52 @@ tabmanager.Tab.prototype = {
 	,path: null
 	,doc: null
 	,loaded: null
+	,mtime: null
 	,li: null
 	,span3: null
 	,watcher: null
-	,ignoreNextUpdates: null
 	,startWatcher: function() {
 		var _g = this;
-		this.watcher = watchers.Watcher.watchFileForUpdates(this.path,function() {
-			console.log(_g.path + " is updated");
-			if(_g.ignoreNextUpdates <= 0) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile)); else _g.ignoreNextUpdates--;
-		},2100);
+		this.mtime = new Date().getTime();
+		var watcher = Pathwatcher__13.watch(this.path,function(event,_path) {
+			switch(event) {
+			case "change":
+				_g.checkStat();
+				break;
+			case "delete":
+				_g.checkIfExistsAndStartWatching();
+				break;
+			default:
+				console.log(event);
+			}
+		});
+	}
+	,checkIfExistsAndStartWatching: function() {
+		var _g = this;
+		haxe.Timer.delay(function() {
+			Fs__16.exists(_g.path,function(exists2) {
+				var tabManagerInstance = tabmanager.TabManager.get();
+				if(tabManagerInstance.tabMap.exists(_g.path) && exists2 && (function($this) {
+					var $r;
+					var _this = Pathwatcher__13.getWatchedPaths();
+					$r = HxOverrides.indexOf(_this,_g.path,0);
+					return $r;
+				}(this)) == -1) Fs__16.stat(_g.path,function(err,stat) {
+					if(stat.mtime.getTime() > _g.mtime) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+					_g.startWatcher();
+				});
+			});
+		},1500);
+	}
+	,checkStat: function() {
+		var _g = this;
+		Fs__16.exists(this.path,function(exists) {
+			if(exists) Fs__16.stat(_g.path,function(err,stats) {
+				if(err == null) {
+					if(stats.mtime.getTime() > _g.mtime) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+				} else console.log(err);
+			});
+		});
 	}
 	,reloadFile: function() {
 		var _g = this;
@@ -18033,6 +18023,7 @@ tabmanager.Tab.prototype = {
 			_g.doc.setValue(contents);
 			_g.doc.markClean();
 			_g.setChanged(false);
+			_g.mtime = new Date().getTime();
 		});
 	}
 	,setChanged: function(changed) {
@@ -18042,16 +18033,21 @@ tabmanager.Tab.prototype = {
 	}
 	,remove: function() {
 		this.li.remove();
-		if(this.watcher != null) {
+		if((function($this) {
+			var $r;
+			var _this = Pathwatcher__13.getWatchedPaths();
+			$r = HxOverrides.indexOf(_this,$this.path,0);
+			return $r;
+		}(this)) != -1 && this.watcher != null) {
 			this.watcher.close();
 			this.watcher = null;
 		}
 	}
 	,save: function() {
-		this.ignoreNextUpdates++;
 		Fs__16.writeFileSync(this.path,this.doc.getValue(),"utf8");
 		this.doc.markClean();
 		this.setChanged(false);
+		this.mtime = new Date().getTime();
 	}
 	,getElement: function() {
 		return this.li;
@@ -19088,23 +19084,9 @@ watchers.Watcher = function() { };
 $hxClasses["watchers.Watcher"] = watchers.Watcher;
 watchers.Watcher.__name__ = ["watchers","Watcher"];
 watchers.Watcher.watchFileForUpdates = function(_path,onUpdate,_interval) {
-	var config = { path : _path, listeners : { change : function(changeType,filePath,fileCurrentStat,filePreviousStat) {
-		if(changeType == "update") onUpdate();
-	}, log : function(logLevel,args) {
-		console.log(logLevel);
-		console.log(args);
-	}, watching : function(err,isWatching) {
-		console.log(err);
-		console.log(isWatching);
-	}, error : function(err1) {
-		console.log(err1);
-	}}, next : function(err2,watchers) {
-		console.log(err2);
-		console.log(watchers);
-	}};
-	if(_interval != null) config.interval = _interval;
-	config.persistent = true;
-	var watcher = Watchr__10.watch(config);
+	var watcher = Pathwatcher__13.watch(_path,function(event,path) {
+		if(event == "change") onUpdate();
+	});
 	return watcher;
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
@@ -19162,7 +19144,7 @@ var BrowserWindow__2 = require('remote').require("browser-window");
 var Dialog__0 = require('remote').require("dialog");
 var Clipboard__4 = require("clipboard");
 var Screen__3 = require("screen");
-var Shell__12 = require("shell");
+var Shell__11 = require("shell");
 var WebView__5 = require("web-view");
 var ChildProcess__15 = require("child_process");
 var Fs__16 = require("fs");
@@ -19176,10 +19158,10 @@ var Socket__7 = require("net").Socket;
 var Readable__1 = require("stream").Readable;
 var Writable__2 = require("stream").Writable;
 var Mkdirp__9 = require("mkdirp");
-var Mv__11 = require("mv");
-var Remove__13 = require("remove");
+var Mv__10 = require("mv");
+var Pathwatcher__13 = require("pathwatcher");
+var Remove__12 = require("remove");
 var Walkdir__18 = require("walkdir");
-var Watchr__10 = require("watchr");
 cm.ColorPreview.top = 0;
 cm.ColorPreview.left = 0;
 cm.ERegPreview.markers = [];

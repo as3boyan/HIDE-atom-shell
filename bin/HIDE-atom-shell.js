@@ -2,6 +2,7 @@
 var AtomShellMain = function() { };
 AtomShellMain.main = function() {
 	var mainBrowserWindow = null;
+	App__0.commandLine.appendSwitch("js-flags","--harmony");
 	App__0.on("window-all-closed",function() {
 		if(js.Node.process.platform != "darwin") App__0.quit();
 	});
@@ -35,6 +36,7 @@ AtomShellMain.main = function() {
 		this1["zoom-factor"] = val.zoomFactor;
 		windowOptions = this1;
 		windowOptions["min-width"] = 768;
+		windowOptions["min-height"] = 300;
 		mainBrowserWindow = new BrowserWindow__1(windowOptions);
 		mainBrowserWindow.loadUrl("file://" + js.Node.__dirname + "/index.html");
 		mainBrowserWindow.on("closed",function() {

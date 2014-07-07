@@ -9,6 +9,8 @@ class AtomShellMain
     {
 		var mainBrowserWindow = null;
 		
+		App.commandLine.appendSwitch('js-flags', '--harmony');
+
 		App.on(AppEvent.WINDOW_ALL_CLOSED, function ()
 			   {
 				   if (js.Node.process.platform != "darwin")
@@ -22,6 +24,7 @@ class AtomShellMain
 			{
 				var windowOptions:BrowserWindowOptions = {};
 				windowOptions.minWidth = 768;
+				windowOptions.minHeight = 300;
 // 				windowOptions.skipTaskbar = true;
 // 				windowOptions.center = true;
 // 				windowOptions.width = size.width;

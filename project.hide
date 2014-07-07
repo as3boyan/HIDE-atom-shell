@@ -44,9 +44,35 @@
         }
     ]
     ,"files" : [
+         {
+             "path" : "externs/haxe-js-kit/js/npm/Pathwatcher.hx"
+            ,"useTabs" : true
+            ,"indentSize" : 4
+            ,"foldedRegions" : [
 
+            ]
+            ,"activeLine" : 26
+        }
+        ,{
+             "path" : "src/filetree/FileTree.hx"
+            ,"useTabs" : true
+            ,"indentSize" : 4
+            ,"foldedRegions" : [
+
+            ]
+            ,"activeLine" : 707
+        }
+        ,{
+             "path" : "src/tabmanager/Tab.hx"
+            ,"useTabs" : true
+            ,"indentSize" : 4
+            ,"foldedRegions" : [
+
+            ]
+            ,"activeLine" : 205
+        }
     ]
-    ,"activeFile" : "externs/alertify/Alertify.hx"
+    ,"activeFile" : "src/tabmanager/Tab.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : null

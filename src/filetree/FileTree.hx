@@ -1,8 +1,9 @@
 package filetree;
+import js.npm.Pathwatcher;
 import js.npm.Remove;
 import js.atomshell.browserandwebpage.Shell;
 import js.npm.Mv;
-import js.npm.Watchr;
+//import js.npm.Watchr;
 import js.node.Path;
 import js.node.Fs;
 import js.node.fs.Stats;
@@ -599,85 +600,108 @@ class FileTree
 		
 		var classpathWalker = ClasspathWalker.get();
 			
-		var config:WatchrConfig = {
-			path: path,
-			listeners: {
-				change: function (changeType, filePath, fileCurrentStat, filePreviousStat):Void 
-				{
-					trace(changeType);
-					trace(filePath);
-					trace(fileCurrentStat);
-					trace(filePreviousStat);
+// 		var config:WatchrConfig = {
+// 			path: path,
+// 			listeners: {
+// 				change: function (changeType, filePath, fileCurrentStat, filePreviousStat):Void 
+// 				{
+// 					trace(changeType);
+// 					trace(filePath);
+// 					trace(fileCurrentStat);
+// 					trace(filePreviousStat);
 					
-					switch (changeType) 
-					{
-						case 'create':
-							trace(changeType);
-							trace(filePath);
-							//load();
+// 					switch (changeType) 
+// 					{
+// 						case 'create':
+// 							trace(changeType);
+// 							trace(filePath);
+// 							//load();
 							
-							Fs.stat(filePath, function (error, stat:Stats):Void 
-							{
-								if (error == null) 
-								{
-									if (stat.isFile()) 
-									{
-										if (changeType == 'create') 
-										{
-											classpathWalker.addFile(filePath);
-										}
-										else
-										{
-											classpathWalker.removeFile(filePath);
-										}
-									}
-									else if(stat.isDirectory()) 
-									{
-										trace(changeType);
-										trace(filePath);
-										//ClasspathWalker.parseProjectArguments();
-									}
-								}
-								else 
-								{
-									trace(error);
-								}
-							}
-							);
-                        case 'delete':
-                            if (Path.extname(filePath) != "")
-                            {
-                            	classpathWalker.removeFile(filePath);
-                    		}
-						default:
-							trace(filePath + " is updated");
-					}
-				},
-				log: function (logLevel, args)
-				{
-					trace(logLevel);
-					trace(args);
-				},
-				watching: function (err, isWatching)
-				{
-					trace(err);
-					trace(isWatching);
-				},
-				error: function (err)
-				{
-					trace(err);
-				}
-			},
-			next: function (err, watchers)
-			{
-				trace(err);
-				trace(watchers);
-			}
-		};
+// 							Fs.stat(filePath, function (error, stat:Stats):Void 
+// 							{
+// 								if (error == null) 
+// 								{
+// 									if (stat.isFile()) 
+// 									{
+// 										if (changeType == 'create') 
+// 										{
+// 											classpathWalker.addFile(filePath);
+// 										}
+// 										else
+// 										{
+// 											classpathWalker.removeFile(filePath);
+// 										}
+// 									}
+// 									else if(stat.isDirectory()) 
+// 									{
+// 										trace(changeType);
+// 										trace(filePath);
+// 										//ClasspathWalker.parseProjectArguments();
+// 									}
+// 								}
+// 								else 
+// 								{
+// 									trace(error);
+// 								}
+// 							}
+// 							);
+//                         case 'delete':
+//                             if (Path.extname(filePath) != "")
+//                             {
+//                             	classpathWalker.removeFile(filePath);
+//                     		}
+// 						default:
+// 							trace(filePath + " is updated");
+// 					}
+// 				},
+// // 				log: function (logLevel, args)
+// // 				{
+// // 					trace(logLevel);
+// // 					trace(args);
+// // 				},
+// // 				watching: function (err, isWatching)
+// // 				{
+// // 					trace(err);
+// // 					trace(isWatching);
+// // 				},
+// // 				error: function (err)
+// // 				{
+// // 					trace(err);
+// // 				}
+// 			},
+// // 			next: function (err, watchers)
+// // 			{
+// // 				trace(err);
+// // 				trace(watchers);
+// // 			}
+// 		};
 		
-		config.interval = 2100;
+// 		config.interval = 2100;
 		
-		watcher = Watchr.watch(config);
+// 		watcher = Watchr.watch(config);
+		
+		watcher = Pathwatcher.watch(path, function (event, _path)
+								   {
+									   switch (event)
+									   {
+										   case PathwatcherEvent.CHANGE:
+												Fs.exists(_path, function (exists)
+														 {
+															 if (exists)
+															 {
+																 //file created
+															 }
+															 else
+															 {
+																 //file removed
+															 }
+
+														 });
+										   default:
+
+									   }
+
+								   });
 		
 		lastProjectName = projectName;
 		lastProjectPath = path;
