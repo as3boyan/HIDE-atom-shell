@@ -1,4 +1,5 @@
 package ;
+import js.Node;
 import js.atomshell.browser.App;
 import js.atomshell.browser.BrowserWindow;
 import js.Lib;
@@ -8,6 +9,8 @@ class AtomShellMain
     static public function main()
     {
 		var mainBrowserWindow = null;
+		
+		Node.process.chdir(Node.__dirname);
 		
 		App.commandLine.appendSwitch('js-flags', '--harmony');
 
@@ -29,6 +32,8 @@ class AtomShellMain
 // 				windowOptions.center = true;
 // 				windowOptions.width = size.width;
 // 				windowOptions.height = size.height;
+				
+				windowOptions.icon = "HIDE.png";
 				
 				mainBrowserWindow = new BrowserWindow(windowOptions);
 				

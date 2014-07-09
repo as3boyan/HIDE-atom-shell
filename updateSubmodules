@@ -10,6 +10,10 @@ git pull origin master
 cd ../..
 cd js/alertify.js
 git pull origin 0.3
+cd ../../..
+cd externs
+cd haxe-js-kit
+git pull origin master
 cd ../..
 grunt concat cssmin
 

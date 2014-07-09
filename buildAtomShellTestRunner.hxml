@@ -1,0 +1,30 @@
+#integrate files to classpath
+-cp src
+-cp test
+
+-cp externs/atom-shell
+-cp externs/haxe-js-kit
+
+-cp externs/codemirror
+-cp externs/alertify
+-cp libs/hxparse/src
+-cp libs/haxeparser/src
+-cp libs/haxeprinter/src
+
+-lib jQueryExtern
+-lib tjson
+-resource libs/haxeprinter/res/config.json@config
+-D noStyle
+-D nodejs
+
+-main AtomShellTestRunner
+
+-js bin/run_tests.js
+
+-D browser
+
+-D source-map-content
+
+-debug
+
+-dce full

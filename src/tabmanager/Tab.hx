@@ -155,9 +155,12 @@ class Tab
 							   {
 								   if (err == null)
 								   {
+									   trace(stats.mtime.getTime());
+									   trace(mtime);
+									   
 									   if (stats.mtime.getTime() > mtime)
 									   {
-										   dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
+										  mtime = Date.now().getTime(); dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
 									   }
 
 								   }

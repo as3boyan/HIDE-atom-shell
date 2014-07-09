@@ -1,81 +1,22 @@
 {
-     "type" : 0
-    ,"target" : 1
-    ,"name" : "HIDE-atom-shell"
-    ,"main" : null
-    ,"projectPackage" : ""
-    ,"company" : "AS3Boyan"
-    ,"license" : "MIT"
-    ,"url" : ""
+     "type" : 2
+    ,"target" : null
+    ,"name" : "/HIDE-atom-shell"
+    ,"main" : "buildAtomShellTestRunner.hxml"
+    ,"projectPackage" : null
+    ,"company" : null
+    ,"license" : null
+    ,"url" : null
     ,"targetData" : [
-         {
-             "pathToHxml" : "flash.hxml"
-            ,"runActionType" : 1
-            ,"runActionText" : "bin/HIDE-atom-shell.swf"
-        }
-        ,{
-             "pathToHxml" : "javascript.hxml"
-            ,"runActionType" : 2
-            ,"runActionText" : "haxelib run atom-shell ~/HIDE-atom-shell/bin"
-        }
-        ,{
-             "pathToHxml" : "neko.hxml"
-            ,"runActionType" : 2
-            ,"runActionText" : "neko bin/HIDE-atom-shell.n"
-        }
-        ,{
-             "pathToHxml" : "php.hxml"
-        }
-        ,{
-             "pathToHxml" : "cpp.hxml"
-            ,"runActionType" : 2
-            ,"runActionText" : "bin/Main-debug"
-        }
-        ,{
-             "pathToHxml" : "java.hxml"
-        }
-        ,{
-             "pathToHxml" : "csharp.hxml"
-        }
-        ,{
-             "pathToHxml" : "python.hxml"
-            ,"runActionType" : 2
-            ,"runActionText" : "python bin/HIDE-atom-shell.py"
-        }
+
     ]
     ,"files" : [
-         {
-             "path" : "externs/haxe-js-kit/js/npm/Pathwatcher.hx"
-            ,"useTabs" : true
-            ,"indentSize" : 4
-            ,"foldedRegions" : [
 
-            ]
-            ,"activeLine" : 26
-        }
-        ,{
-             "path" : "src/filetree/FileTree.hx"
-            ,"useTabs" : true
-            ,"indentSize" : 4
-            ,"foldedRegions" : [
-
-            ]
-            ,"activeLine" : 707
-        }
-        ,{
-             "path" : "src/tabmanager/Tab.hx"
-            ,"useTabs" : true
-            ,"indentSize" : 4
-            ,"foldedRegions" : [
-
-            ]
-            ,"activeLine" : 205
-        }
     ]
-    ,"activeFile" : "src/tabmanager/Tab.hx"
+    ,"activeFile" : "buildAtomShellTestRunner.hxml"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
-    ,"runActionType" : null
+    ,"runActionType" : 2
     ,"runActionText" : null
     ,"buildActionCommand" : null
     ,"hiddenItems" : [

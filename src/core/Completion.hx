@@ -470,6 +470,14 @@ class Completion
 			}
 		}
 
+		if (index != -1)
+		{
+			parseXml(data);
+		}
+	}
+
+	function parseXml(data:String)
+	{
 		var xml:Xml = Xml.parse(data);
 
 		var fast = new Fast(xml);

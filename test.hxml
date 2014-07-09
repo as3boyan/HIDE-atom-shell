@@ -1,0 +1,31 @@
+## JavaScript
+-main TestMain
+-lib munit
+-lib hamcrest
+-cp src
+-cp externs/atom-shell
+-cp externs/haxe-js-kit
+
+-cp externs/codemirror
+-cp externs/alertify
+-cp libs/hxparse/src
+-cp libs/haxeparser/src
+-cp libs/haxeprinter/src
+
+-cp test
+
+-lib jQueryExtern
+-lib tjson
+-resource libs/haxeprinter/res/config.json@config
+-D noStyle
+-D nodejs
+
+-js bin/js_test.js
+
+-D webpage
+
+-D source-map-content
+
+-debug
+
+# -dce full

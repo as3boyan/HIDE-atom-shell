@@ -14,3 +14,6 @@ branch = 0.3
 [submodule "externs/haxe-js-kit"]
 	path = externs/haxe-js-kit
 	url = https://github.com/as3boyan/haxe-js-kit.git
+[submodule "externs/phantomjs-hx"]
+	path = externs/phantomjs-hx
+	url = https://github.com/jdonaldson/phantomjs-hx.git

@@ -682,18 +682,24 @@ class FileTree
 		
 		watcher = Pathwatcher.watch(path, function (event, _path)
 								   {
+									   trace(event);
+									   trace(_path);
+									   
 									   switch (event)
 									   {
 										   case PathwatcherEvent.CHANGE:
 												Fs.exists(_path, function (exists)
 														 {
+															 
 															 if (exists)
 															 {
 																 //file created
+																 trace("file created");
 															 }
 															 else
 															 {
 																 //file removed
+																 trace("file removed");
 															 }
 
 														 });
