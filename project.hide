@@ -13,7 +13,7 @@
     ,"files" : [
 
     ]
-    ,"activeFile" : "buildAtomShellTestRunner.hxml"
+    ,"activeFile" : "externs/haxe-js-kit/js/npm/Pathwatcher.hx"
     ,"openFLTarget" : null
     ,"openFLBuildMode" : "Debug"
     ,"runActionType" : 2

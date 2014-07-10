@@ -360,26 +360,29 @@ class FileTree
 					var topDirectory = untyped new JQuery("#filetree").jqxTree('getItems')[0].value.path;
 					var selectedItem = untyped new JQuery("#filetree").jqxTree('getSelectedItem');
 					
-					var previousPath = selectedItem.value.path;
-                    var newPath = Path.join(topDirectory, path, selectedItem.label);
-					
-					if (previousPath != newPath)
+					if	(selectedItem != null)
 					{
-						Mv.move(previousPath, newPath, function (error):Void 
+						var previousPath = selectedItem.value.path;
+						var newPath = Path.join(topDirectory, path, selectedItem.label);
+
+						if (previousPath != newPath)
 						{
-							if (error == null) 
+							Mv.move(previousPath, newPath, function (error):Void 
 							{
-								Alertify.success("File were successfully moved to " + newPath);
-								selectedItem.value.path = newPath;
-								attachContextMenu();
+								if (error == null) 
+								{
+									Alertify.success("File were successfully moved to " + newPath);
+									selectedItem.value.path = newPath;
+									attachContextMenu();
+								}
+								else 
+								{
+									Alertify.error("Can't move file from " + previousPath + " to " + newPath);
+									load();
+								}
 							}
-							else 
-							{
-								Alertify.error("Can't move file from " + previousPath + " to " + newPath);
-								load();
-							}
+							);
 						}
-						);
 					}
                 }
             });
@@ -680,34 +683,34 @@ class FileTree
 		
 // 		watcher = Watchr.watch(config);
 		
-		watcher = Pathwatcher.watch(path, function (event, _path)
-								   {
-									   trace(event);
-									   trace(_path);
+// 		watcher = Pathwatcher.watch(path, function (event, _path)
+// 								   {
+// 									   trace(event);
+// 									   trace(_path);
 									   
-									   switch (event)
-									   {
-										   case PathwatcherEvent.CHANGE:
-												Fs.exists(_path, function (exists)
-														 {
+// 									   switch (event)
+// 									   {
+// 										   case PathwatcherEvent.CHANGE:
+// 												Fs.exists(_path, function (exists)
+// 														 {
 															 
-															 if (exists)
-															 {
-																 //file created
-																 trace("file created");
-															 }
-															 else
-															 {
-																 //file removed
-																 trace("file removed");
-															 }
+// 															 if (exists)
+// 															 {
+// 																 //file created
+// 																 trace("file created");
+// 															 }
+// 															 else
+// 															 {
+// 																 //file removed
+// 																 trace("file removed");
+// 															 }
 
-														 });
-										   default:
+// 														 });
+// 										   default:
 
-									   }
+// 									   }
 
-								   });
+// 								   });
 		
 		lastProjectName = projectName;
 		lastProjectPath = path;

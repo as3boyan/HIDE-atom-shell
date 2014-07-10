@@ -1,6 +1,6 @@
 #integrate files to classpath
 -cp src
--cp test
+-cp atom-shell-test-runner
 
 -cp externs/atom-shell
 -cp externs/haxe-js-kit
@@ -19,7 +19,7 @@
 
 -main AtomShellTestRunner
 
--js bin/run_tests.js
+-js bin/test/run_tests.js
 
 -D browser
 

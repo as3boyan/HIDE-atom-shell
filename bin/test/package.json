@@ -1,7 +1,7 @@
 {
 	"name": "HIDE",
   	"version": "0.4.5",
-	"main": "../run_tests.js",
+	"main": "run_tests.js",
 	"devDependencies": {
 		"mkdirp": "latest",
 		"mv": "latest",

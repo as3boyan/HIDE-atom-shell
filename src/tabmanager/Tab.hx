@@ -89,6 +89,8 @@ class Tab
 
 	public function startWatcher():Void
 	{
+		trace("start watcher for " + path);
+		
 		mtime = Date.now().getTime();
 		
 // 		watcher = Watcher.watchFileForUpdates(path, function ():Void
@@ -133,6 +135,7 @@ class Tab
 										 {
 											 if (stat.mtime.getTime() > mtime)
 											 {
+												 mtime = Date.now().getTime();
 												 dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
 											 }
 												 
@@ -157,10 +160,13 @@ class Tab
 								   {
 									   trace(stats.mtime.getTime());
 									   trace(mtime);
+									   trace(stats.mtime);
+									   trace(Date.fromTime(mtime));
 									   
 									   if (stats.mtime.getTime() > mtime)
 									   {
-										  mtime = Date.now().getTime(); dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
+										   mtime = Date.now().getTime();
+										   dialogs.DialogManager.showReloadFileDialog(path, reloadFile);
 									   }
 
 								   }

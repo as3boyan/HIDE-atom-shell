@@ -4357,7 +4357,8 @@ core.ProcessHelper.prototype = {
 					var args = line.split(":");
 					if(args.length > 3) {
 						var relativePath = args[0];
-						var fullPath = [Path__20.join(projectaccess.ProjectAccess.path,relativePath)];
+						var fullPath = [relativePath];
+						if(!Fs__14.existsSync(fullPath[0])) fullPath[0] = Path__20.join(projectaccess.ProjectAccess.path,relativePath);
 						if(!core.HaxeLint.fileData.exists(fullPath[0])) core.HaxeLint.fileData.set(fullPath[0],[]);
 						var data = core.HaxeLint.fileData.get(fullPath[0]);
 						core.HaxeLint.fileData.set(fullPath[0],data);
@@ -5724,18 +5725,6 @@ filetree.FileTree.prototype = {
 			this.watcher = null;
 		}
 		var classpathWalker = parser.ClasspathWalker.get();
-		this.watcher = Pathwatcher__11.watch(path,function(event1,_path) {
-			console.log(event1);
-			console.log(_path);
-			switch(event1) {
-			case "change":
-				Fs__14.exists(_path,function(exists) {
-					if(exists) console.log("file created"); else console.log("file removed");
-				});
-				break;
-			default:
-			}
-		});
 		this.lastProjectName = projectName;
 		this.lastProjectPath = path;
 		filetree.FileTree.updateProjectMainHxml();
@@ -17978,6 +17967,7 @@ tabmanager.Tab.prototype = {
 	,watcher: null
 	,startWatcher: function() {
 		var _g = this;
+		console.log("start watcher for " + this.path);
 		this.mtime = new Date().getTime();
 		var watcher = Pathwatcher__11.watch(this.path,function(event,_path) {
 			switch(event) {
@@ -18003,7 +17993,10 @@ tabmanager.Tab.prototype = {
 					$r = HxOverrides.indexOf(_this,_g.path,0);
 					return $r;
 				}(this)) == -1) Fs__14.stat(_g.path,function(err,stat) {
-					if(stat.mtime.getTime() > _g.mtime) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+					if(stat.mtime.getTime() > _g.mtime) {
+						_g.mtime = new Date().getTime();
+						dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+					}
 					_g.startWatcher();
 				});
 			});
@@ -18016,7 +18009,18 @@ tabmanager.Tab.prototype = {
 				if(err == null) {
 					console.log(stats.mtime.getTime());
 					console.log(_g.mtime);
-					if(stats.mtime.getTime() > _g.mtime) dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+					console.log(stats.mtime);
+					console.log((function($this) {
+						var $r;
+						var d = new Date();
+						d.setTime(_g.mtime);
+						$r = d;
+						return $r;
+					}(this)));
+					if(stats.mtime.getTime() > _g.mtime) {
+						_g.mtime = new Date().getTime();
+						dialogs.DialogManager.showReloadFileDialog(_g.path,$bind(_g,_g.reloadFile));
+					}
 				} else console.log(err);
 			});
 		});

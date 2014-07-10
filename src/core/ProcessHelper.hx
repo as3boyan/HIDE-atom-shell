@@ -1,4 +1,5 @@
 package core;
+import js.node.Fs;
 import js.node.Path;
 import js.node.ChildProcess;
 import js.html.DivElement;
@@ -150,7 +151,12 @@ class ProcessHelper
 					if (args.length > 3) 
 					{
 						var relativePath:String = args[0];
-						var fullPath:String = Path.join(ProjectAccess.path, relativePath);
+						var fullPath:String = relativePath;
+						
+						if (!Fs.existsSync(fullPath))
+						{
+							fullPath = Path.join(ProjectAccess.path, relativePath);
+						}
 						
                         if (!HaxeLint.fileData.exists(fullPath))
                         {

@@ -1,7 +1,5 @@
 ## JavaScript
 -main TestMain
--lib munit
--lib hamcrest
 -cp src
 -cp externs/atom-shell
 -cp externs/haxe-js-kit
@@ -14,15 +12,18 @@
 
 -cp test
 
+
 -lib jQueryExtern
 -lib tjson
+
+-lib buddy
+
 -resource libs/haxeprinter/res/config.json@config
 -D noStyle
 -D nodejs
+-js bin/test/js_test.js
 
--js bin/js_test.js
-
--D webpage
+# -D webpage
 
 -D source-map-content
 

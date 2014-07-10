@@ -4,7 +4,7 @@ import js.atomshell.browser.App;
 import js.atomshell.browser.BrowserWindow;
 import js.Lib;
 
-class AtomShellMain
+class AtomShellTestRunner
 {
     static public function main()
     {
@@ -29,11 +29,9 @@ class AtomShellMain
 				windowOptions.minWidth = 768;
 				windowOptions.minHeight = 300;
 				
-				windowOptions.icon = "HIDE.png";
-				
 				mainBrowserWindow = new BrowserWindow(windowOptions);
 				
-				mainBrowserWindow.loadUrl("file://" + js.Node.__dirname + "/index.html");
+				mainBrowserWindow.loadUrl("file://" + js.Node.__dirname + "/run_tests.html");
 				
 				mainBrowserWindow.on(BrowserWindowEvent.CLOSED, function ()
 					{
